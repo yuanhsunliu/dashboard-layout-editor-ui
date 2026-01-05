@@ -1,5 +1,7 @@
 # F02: Widget Layout
 
+**Status**: ✅ Implemented (2026-01-05)
+
 ## Overview
 使用者可以在 Dashboard 編輯頁中新增 Widget，並透過拖放調整 Widget 的位置與大小。
 
@@ -12,29 +14,29 @@
 ## Acceptance Criteria
 
 ### 新增 Widget
-- [ ] 點擊「新增 Widget」按鈕可新增空白 Widget
-- [ ] 新 Widget 自動放置在可用空間
-- [ ] 新 Widget 有預設大小 (w: 4, h: 3)
+- [x] 點擊「新增 Widget」按鈕可新增空白 Widget
+- [x] 新 Widget 自動放置在可用空間
+- [x] 新 Widget 有預設大小 (w: 4, h: 3)
 
 ### 拖放移動
-- [ ] 可拖曳 Widget 標題列移動位置
-- [ ] 移動時顯示放置預覽
-- [ ] 放開後 Widget 固定在新位置
-- [ ] Widget 之間自動避免重疊
+- [x] 可拖曳 Widget 標題列移動位置
+- [x] 移動時顯示放置預覽
+- [x] 放開後 Widget 固定在新位置
+- [x] Widget 之間自動避免重疊
 
 ### 調整大小
-- [ ] Widget 右下角有 resize handle
-- [ ] 可拖曳調整寬度與高度
-- [ ] 有最小尺寸限制 (minW: 2, minH: 2)
+- [x] Widget 右下角有 resize handle
+- [x] 可拖曳調整寬度與高度
+- [x] 有最小尺寸限制 (minW: 2, minH: 2)
 
 ### 刪除 Widget
-- [ ] Widget 右上角有刪除按鈕
-- [ ] 點擊後直接刪除（無確認 Dialog）
-- [ ] 刪除後其他 Widget 不自動重排
+- [x] Widget 右上角有刪除按鈕
+- [x] 點擊後直接刪除（無確認 Dialog）
+- [x] 刪除後其他 Widget 不自動重排
 
 ### 佈局儲存
-- [ ] 佈局變更自動同步到狀態
-- [ ] 與 F07 Persistence 整合後可持久化
+- [x] 佈局變更自動同步到狀態
+- [x] 自動儲存 (500ms debounce)
 
 ## UI/UX Spec
 

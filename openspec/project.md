@@ -111,6 +111,9 @@ src/
 - 測試重點在於確保元件行為符合預期，涵蓋主要使用情境即可
 - 不需要覆蓋所有邊界情況
 - E2E 測試重點在於模擬使用者操作流程
+- 開發完成後 must 進行 playwright BDD test, 結果給我看 html 格式 report.
+- 測試要留畫面截圖, 要確認截圖可以在 test report 上正確的看到.
+- 有問題 must 修正到好. 
 
 #### BDD 測試範例
 ```typescript

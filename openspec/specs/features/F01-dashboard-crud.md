@@ -1,5 +1,8 @@
 # F01: Dashboard CRUD
 
+## Status
+✅ **Implemented** - 2026-01-05
+
 ## Overview
 使用者可以建立、檢視、編輯、刪除 Dashboard，並從列表中選擇進入編輯。
 
@@ -13,28 +16,39 @@
 ## Acceptance Criteria
 
 ### Dashboard 列表
-- [ ] 進入首頁顯示 Dashboard 列表
-- [ ] 列表顯示 Dashboard 名稱與建立/更新時間
-- [ ] 空狀態顯示引導建立第一個 Dashboard
+- [x] 進入首頁顯示 Dashboard 列表
+- [x] 列表顯示 Dashboard 名稱與更新時間（7 天內相對時間，超過顯示絕對時間）
+- [x] 列表按 updatedAt 降序排列（最近更新在前）
+- [x] 每個卡片顯示選單按鈕（⋮），點擊展開「重新命名」與「刪除」選項
+- [x] 空狀態顯示引導建立第一個 Dashboard
 
 ### 建立 Dashboard
-- [ ] 點擊「新增 Dashboard」按鈕可建立
-- [ ] 新 Dashboard 預設名稱為「未命名 Dashboard」
-- [ ] 建立後自動導向該 Dashboard 編輯頁
+- [x] 點擊「新增 Dashboard」按鈕可建立
+- [x] 新 Dashboard 預設名稱為「未命名 Dashboard」
+- [x] 建立後自動導向該 Dashboard 編輯頁
 
 ### 重新命名
-- [ ] 可在列表中 inline edit 修改名稱
-- [ ] 或在編輯頁 Header 修改名稱
-- [ ] 名稱不可為空
+- [x] 可在列表中透過選單觸發 inline edit 修改名稱
+- [x] 可在編輯頁 Header 點擊名稱修改
+- [x] 名稱不可為空白
+- [x] 名稱不可超過 50 字元
 
 ### 刪除 Dashboard
-- [ ] 點擊刪除按鈕顯示確認 Dialog
-- [ ] 確認後刪除並更新列表
-- [ ] 刪除成功顯示 Toast 通知
+- [x] 點擊刪除按鈕顯示確認 Dialog
+- [x] 確認後刪除並更新列表
+- [x] 刪除成功顯示 Toast 通知
 
 ### 進入編輯
-- [ ] 點擊 Dashboard 卡片/項目進入編輯頁
-- [ ] URL 更新為 `/dashboard/:id`
+- [x] 點擊 Dashboard 卡片進入編輯頁
+- [x] URL 更新為 `/dashboard/:id`
+- [x] 編輯頁顯示 Header（返回按鈕 + Dashboard 名稱）與空白佈局區域
+
+### API
+- [x] GET /api/dashboards - 列出所有 Dashboard
+- [x] GET /api/dashboards/:id - 取得單一 Dashboard 完整資料
+- [x] POST /api/dashboards - 建立新 Dashboard
+- [x] PATCH /api/dashboards/:id - 更新 Dashboard
+- [x] DELETE /api/dashboards/:id - 刪除 Dashboard
 
 ## UI/UX Spec
 
@@ -45,9 +59,12 @@
 ├─────────────────────────────────────────┤
 │                                         │
 │  ┌─────────────┐  ┌─────────────┐       │
-│  │ 銷售報表    │  │ 行銷分析    │       │
-│  │ 2024/01/01  │  │ 2024/01/02  │       │
-│  │      [編輯名稱] [刪除]       │       │
+│  │ 銷售報表  ⋮ │  │ 行銷分析  ⋮ │       │
+│  │ 3 分鐘前    │  │ 2024/01/02  │       │
+│  └─────────────┘  └─────────────┘       │
+│                                         │
+└─────────────────────────────────────────┘
+```
 │  └─────────────┘  └─────────────┘       │
 │                                         │
 └─────────────────────────────────────────┘
