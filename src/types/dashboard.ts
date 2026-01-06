@@ -1,3 +1,5 @@
+import type { ChartConfig } from './chart';
+
 export interface Dashboard {
   id: string;
   name: string;
@@ -25,10 +27,7 @@ export interface LayoutItem {
 
 export interface Widget {
   id: string;
-  chartType: string;
-  dataSource: string;
-  xAxis: string;
-  yAxis: string;
+  chartConfig?: ChartConfig;
 }
 
 export interface DashboardStore {

@@ -9,7 +9,7 @@ interface WidgetContainerProps {
 }
 
 export function WidgetContainer({ widget, onDelete, children }: WidgetContainerProps) {
-  const title = widget.chartType || '未設定';
+  const title = widget.chartConfig?.title || widget.chartConfig?.chartType || '未設定';
 
   return (
     <div className="flex flex-col h-full bg-card border rounded-lg shadow-sm overflow-hidden">
@@ -33,7 +33,7 @@ export function WidgetContainer({ widget, onDelete, children }: WidgetContainerP
           <X className="h-4 w-4" />
         </Button>
       </div>
-      <div className="flex-1 p-3 overflow-auto" data-testid="widget-content">
+      <div className="flex-1 overflow-hidden" data-testid="widget-content">
         {children}
       </div>
     </div>

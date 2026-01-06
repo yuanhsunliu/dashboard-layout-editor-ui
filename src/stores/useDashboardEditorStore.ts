@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Dashboard, LayoutItem, Widget } from '@/types/dashboard';
+import type { ChartConfig } from '@/types/chart';
 import { updateDashboard, getDashboard } from '@/services/dashboardApi';
 
 interface DashboardEditorState {
@@ -7,7 +8,7 @@ interface DashboardEditorState {
   isSaving: boolean;
   saveError: string | null;
   initDashboard: (id: string) => Promise<void>;
-  addWidget: () => Promise<void>;
+  addWidget: (chartConfig?: ChartConfig) => Promise<void>;
   removeWidget: (widgetId: string) => Promise<void>;
   updateLayout: (layout: LayoutItem[]) => void;
   saveLayoutDebounced: () => void;
@@ -31,17 +32,14 @@ export const useDashboardEditorStore = create<DashboardEditorState>((set, get) =
     set({ dashboard: data, saveError: null });
   },
 
-  addWidget: async () => {
+  addWidget: async (chartConfig?: ChartConfig) => {
     const { dashboard } = get();
     if (!dashboard) return;
 
     const widgetId = generateWidgetId();
     const newWidget: Widget = {
       id: widgetId,
-      chartType: '',
-      dataSource: '',
-      xAxis: '',
-      yAxis: '',
+      chartConfig,
     };
 
     const maxY = dashboard.layout.reduce((max, item) => Math.max(max, item.y + item.h), 0);
@@ -118,7 +116,10 @@ export const useDashboardEditorStore = create<DashboardEditorState>((set, get) =
       set({ isSaving: true });
 
       try {
-        await updateDashboard(dashboard.id, { layout: dashboard.layout });
+        await updateDashboard(dashboard.id, { 
+          layout: dashboard.layout,
+          widgets: dashboard.widgets,
+        });
         set({ isSaving: false, saveError: null });
       } catch {
         set({ isSaving: false, saveError: '儲存失敗' });

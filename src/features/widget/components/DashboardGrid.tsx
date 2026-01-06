@@ -3,7 +3,8 @@ import GridLayout, { verticalCompactor } from 'react-grid-layout';
 import type { LayoutItem as RGLLayoutItem } from 'react-grid-layout';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { WidgetContainer, EmptyWidgetContent, WidgetEmptyState } from '@/features/widget/components';
+import { WidgetContainer, WidgetEmptyState } from '@/features/widget/components';
+import { ChartWidget } from '@/components/chart';
 import type { Dashboard, LayoutItem } from '@/types/dashboard';
 import 'react-grid-layout/css/styles.css';
 
@@ -59,7 +60,7 @@ export function DashboardGrid({
   return (
     <div className="relative" data-testid="dashboard-grid">
       <div className="absolute top-0 right-0 z-10 p-2">
-        <Button onClick={onAddWidget} size="sm" data-testid="add-widget-button">
+        <Button onClick={() => onAddWidget()} size="sm" data-testid="add-widget-button">
           <Plus className="h-4 w-4 mr-2" />
           新增 Widget
         </Button>
@@ -89,7 +90,7 @@ export function DashboardGrid({
                 widget={widget}
                 onDelete={() => onRemoveWidget(item.i)}
               >
-                <EmptyWidgetContent />
+                <ChartWidget chartConfig={widget.chartConfig} />
               </WidgetContainer>
             </div>
           );

@@ -40,9 +40,9 @@ test.describe('Widget Layout', () => {
         await expect(page.getByTestId('widget-title')).toHaveText('未設定');
       });
 
-      test('Then the widget should show "尚未設定圖表" hint', async ({ page }) => {
-        await expect(page.getByTestId('empty-widget-content')).toBeVisible();
-        await expect(page.getByText('尚未設定圖表')).toBeVisible();
+      test('Then the widget should show empty state with setup hint', async ({ page }) => {
+        await expect(page.getByTestId('chart-empty')).toBeVisible();
+        await expect(page.getByText('點擊設定')).toBeVisible();
       });
     });
 
