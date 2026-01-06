@@ -1,14 +1,15 @@
-import { X } from 'lucide-react';
+import { X, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Widget } from '@/types/dashboard';
 
 interface WidgetContainerProps {
   widget: Widget;
   onDelete: () => void;
+  onConfig: () => void;
   children?: React.ReactNode;
 }
 
-export function WidgetContainer({ widget, onDelete, children }: WidgetContainerProps) {
+export function WidgetContainer({ widget, onDelete, onConfig, children }: WidgetContainerProps) {
   const title = widget.chartConfig?.title || widget.chartConfig?.chartType || '未設定';
 
   return (
@@ -20,18 +21,32 @@ export function WidgetContainer({ widget, onDelete, children }: WidgetContainerP
         <span className="text-sm font-medium truncate" data-testid="widget-title">
           {title}
         </span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6 shrink-0"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          data-testid="widget-delete-button"
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1 shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={(e) => {
+              e.stopPropagation();
+              onConfig();
+            }}
+            data-testid="widget-config-button"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            data-testid="widget-delete-button"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       <div className="flex-1 overflow-hidden" data-testid="widget-content">
         {children}

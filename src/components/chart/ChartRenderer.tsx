@@ -1,11 +1,13 @@
 import type { ChartConfig } from '@/types/chart';
+import type { DemoData } from './demoData';
 import { LineChart, BarChart } from './charts';
 
 interface ChartRendererProps {
   config: ChartConfig;
+  previewData?: DemoData;
 }
 
-export function ChartRenderer({ config }: ChartRendererProps) {
+export function ChartRenderer({ config, previewData }: ChartRendererProps) {
   switch (config.chartType) {
     case 'line':
       return (
@@ -13,6 +15,7 @@ export function ChartRenderer({ config }: ChartRendererProps) {
           title={config.title}
           smooth={config.smooth}
           showArea={config.showArea}
+          data={previewData}
         />
       );
     case 'bar':
@@ -21,6 +24,7 @@ export function ChartRenderer({ config }: ChartRendererProps) {
           title={config.title}
           stacked={config.stacked}
           horizontal={config.horizontal}
+          data={previewData}
         />
       );
     default:

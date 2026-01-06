@@ -20,6 +20,7 @@ interface DashboardGridProps {
   dashboard: Dashboard;
   onAddWidget: () => void;
   onRemoveWidget: (widgetId: string) => void;
+  onConfigWidget: (widgetId: string) => void;
   onLayoutChange: (layout: LayoutItem[]) => void;
   containerWidth: number;
 }
@@ -28,6 +29,7 @@ export function DashboardGrid({
   dashboard,
   onAddWidget,
   onRemoveWidget,
+  onConfigWidget,
   onLayoutChange,
   containerWidth,
 }: DashboardGridProps) {
@@ -89,8 +91,12 @@ export function DashboardGrid({
               <WidgetContainer
                 widget={widget}
                 onDelete={() => onRemoveWidget(item.i)}
+                onConfig={() => onConfigWidget(item.i)}
               >
-                <ChartWidget chartConfig={widget.chartConfig} />
+                <ChartWidget 
+                  chartConfig={widget.chartConfig} 
+                  onConfigClick={() => onConfigWidget(item.i)}
+                />
               </WidgetContainer>
             </div>
           );

@@ -1,15 +1,16 @@
 import { useRef, useEffect, useCallback, useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
-import { DEMO_DATA } from '../demoData';
+import { DEMO_DATA, type DemoData } from '../demoData';
 
 interface LineChartProps {
   title?: string;
   smooth?: boolean;
   showArea?: boolean;
+  data?: DemoData;
 }
 
-export function LineChart({ title, smooth = false, showArea = false }: LineChartProps) {
+export function LineChart({ title, smooth = false, showArea = false, data }: LineChartProps) {
   const chartRef = useRef<ReactECharts>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const resizeTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -39,16 +40,16 @@ export function LineChart({ title, smooth = false, showArea = false }: LineChart
   }, [handleResize]);
 
   const option: EChartsOption = useMemo(() => {
-    const demoData = DEMO_DATA.line;
+    const chartData = data || DEMO_DATA.line;
     return {
       title: title ? { text: title, left: 'center', top: 10 } : undefined,
       tooltip: { trigger: 'axis' },
       xAxis: {
         type: 'category',
-        data: demoData.xAxis,
+        data: chartData.xAxis,
       },
       yAxis: { type: 'value' },
-      series: demoData.series.map((s) => ({
+      series: chartData.series.map((s) => ({
         name: s.name,
         type: 'line' as const,
         data: s.data,
@@ -57,7 +58,7 @@ export function LineChart({ title, smooth = false, showArea = false }: LineChart
       })),
       grid: { left: 40, right: 20, top: title ? 50 : 30, bottom: 30 },
     };
-  }, [title, smooth, showArea]);
+  }, [title, smooth, showArea, data]);
 
   return (
     <div ref={containerRef} className="w-full h-full" data-testid="line-chart">

@@ -5,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Toaster, toast } from 'sonner';
 import { InlineEditName } from '@/features/dashboard/components';
 import { DashboardGrid } from '@/features/widget/components';
+import { ChartConfigPanel } from '@/features/chart-config';
 import { updateDashboard } from '@/services/dashboardApi';
 import { useDashboardEditorStore } from '@/stores/useDashboardEditorStore';
+import type { ChartConfig } from '@/types/chart';
 
 export function DashboardEditorPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,8 +16,10 @@ export function DashboardEditorPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(1200);
   const [isEditingName, setIsEditingName] = useState(false);
+  const [configPanelOpen, setConfigPanelOpen] = useState(false);
+  const [configWidgetId, setConfigWidgetId] = useState<string | null>(null);
 
-  const { dashboard, isSaving, saveError, initDashboard, addWidget, removeWidget, updateLayout } =
+  const { dashboard, isSaving, saveError, initDashboard, addWidget, removeWidget, updateWidgetConfig, updateLayout } =
     useDashboardEditorStore();
 
   useEffect(() => {
@@ -53,6 +57,30 @@ export function DashboardEditorPage() {
     setIsEditingName(false);
     toast.success('名稱已更新');
   }, [id, initDashboard]);
+
+  const handleConfigWidget = useCallback((widgetId: string) => {
+    setConfigWidgetId(widgetId);
+    setConfigPanelOpen(true);
+  }, []);
+
+  const handleCloseConfigPanel = useCallback(() => {
+    setConfigPanelOpen(false);
+    setConfigWidgetId(null);
+  }, []);
+
+  const handleSaveConfig = useCallback(async (config: ChartConfig) => {
+    if (!configWidgetId) return;
+    try {
+      await updateWidgetConfig(configWidgetId, config);
+      handleCloseConfigPanel();
+    } catch {
+      toast.error('儲存設定失敗');
+    }
+  }, [configWidgetId, updateWidgetConfig, handleCloseConfigPanel]);
+
+  const configWidgetData = configWidgetId
+    ? dashboard?.widgets.find((w) => w.id === configWidgetId)
+    : null;
 
   if (!dashboard) {
     return (
@@ -99,10 +127,17 @@ export function DashboardEditorPage() {
           dashboard={dashboard}
           onAddWidget={addWidget}
           onRemoveWidget={removeWidget}
+          onConfigWidget={handleConfigWidget}
           onLayoutChange={updateLayout}
           containerWidth={containerWidth}
         />
       </main>
+      <ChartConfigPanel
+        isOpen={configPanelOpen}
+        onClose={handleCloseConfigPanel}
+        onSave={handleSaveConfig}
+        initialConfig={configWidgetData?.chartConfig}
+      />
     </div>
   );
 }

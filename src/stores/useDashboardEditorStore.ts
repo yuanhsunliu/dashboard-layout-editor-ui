@@ -10,6 +10,7 @@ interface DashboardEditorState {
   initDashboard: (id: string) => Promise<void>;
   addWidget: (chartConfig?: ChartConfig) => Promise<void>;
   removeWidget: (widgetId: string) => Promise<void>;
+  updateWidgetConfig: (widgetId: string, chartConfig: ChartConfig) => Promise<void>;
   updateLayout: (layout: LayoutItem[]) => void;
   saveLayoutDebounced: () => void;
 }
@@ -87,6 +88,29 @@ export const useDashboardEditorStore = create<DashboardEditorState>((set, get) =
         widgets: updatedDashboard.widgets,
         layout: updatedDashboard.layout,
       });
+      set({ isSaving: false, saveError: null });
+    } catch {
+      set({ isSaving: false, saveError: '儲存失敗' });
+    }
+  },
+
+  updateWidgetConfig: async (widgetId: string, chartConfig: ChartConfig) => {
+    const { dashboard } = get();
+    if (!dashboard) return;
+
+    const updatedWidgets = dashboard.widgets.map(w =>
+      w.id === widgetId ? { ...w, chartConfig } : w
+    );
+
+    const updatedDashboard: Dashboard = {
+      ...dashboard,
+      widgets: updatedWidgets,
+    };
+
+    set({ dashboard: updatedDashboard, isSaving: true });
+
+    try {
+      await updateDashboard(dashboard.id, { widgets: updatedWidgets });
       set({ isSaving: false, saveError: null });
     } catch {
       set({ isSaving: false, saveError: '儲存失敗' });
