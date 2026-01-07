@@ -66,6 +66,7 @@ src/
 ├── features/            # 功能模組（按功能分類）
 │   ├── dashboard/       # Dashboard 管理功能
 │   ├── chart-config/    # 圖表設定功能
+│   ├── chart-plugins/   # 圖表插件系統
 │   └── theme/           # 主題切換功能
 ├── hooks/               # 自訂 Hooks
 ├── stores/              # Zustand stores
@@ -157,12 +158,21 @@ test.describe('Dashboard Management', () => {
 - **Theme**: 視覺主題，影響整個 Dashboard 的配色
 
 ### 圖表類型
+圖表類型透過 **Chart Plugin System** 擴展，開發人員可按照規範實作新的圖表插件：
+- 折線圖 (Line Chart) ✅
+- 長條圖 (Bar Chart) ✅
 - 圓餅圖 (Pie Chart)
-- 折線圖 (Line Chart)
-- 長條圖 (Bar Chart)
 - 面積圖 (Area Chart)
 - 散點圖 (Scatter Chart)
 - 更多 ECharts 支援的類型...
+
+### Chart Plugin System
+> Build-time 插件機制，讓開發人員可以擴展圖表類型
+
+- **Plugin 結構**: 每個圖表類型為獨立 Plugin，包含 Renderer、ConfigFields、Schema
+- **Registry**: 集中管理所有已註冊的 Plugin，系統自動取用
+- **開發流程**: 實作 ChartPlugin Interface → 註冊至 Registry → 重新 Build
+- **文件**: 參考 `src/features/chart-plugins/docs/PLUGIN_DEVELOPMENT.md`
 
 ### 佈局系統
 - 基於 Grid 的佈局系統

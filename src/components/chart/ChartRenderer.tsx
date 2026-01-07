@@ -1,6 +1,7 @@
 import type { ChartConfig } from '@/types/chart';
 import type { DemoData } from './demoData';
-import { LineChart, BarChart } from './charts';
+import { chartRegistry, ChartErrorBoundary } from '@/features/chart-plugins';
+import { AlertTriangle } from 'lucide-react';
 
 interface ChartRendererProps {
   config: ChartConfig;
@@ -8,26 +9,25 @@ interface ChartRendererProps {
 }
 
 export function ChartRenderer({ config, previewData }: ChartRendererProps) {
-  switch (config.chartType) {
-    case 'line':
-      return (
-        <LineChart
-          title={config.title}
-          smooth={config.smooth}
-          showArea={config.showArea}
-          data={previewData}
-        />
-      );
-    case 'bar':
-      return (
-        <BarChart
-          title={config.title}
-          stacked={config.stacked}
-          horizontal={config.horizontal}
-          data={previewData}
-        />
-      );
-    default:
-      return null;
+  const plugin = chartRegistry.getByType(config.chartType);
+
+  if (!plugin) {
+    return (
+      <div 
+        className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-2"
+        data-testid="chart-error-unknown-type"
+      >
+        <AlertTriangle className="h-8 w-8 text-destructive" />
+        <p className="text-sm">未知的圖表類型: {config.chartType}</p>
+      </div>
+    );
   }
+
+  const Renderer = plugin.Renderer;
+
+  return (
+    <ChartErrorBoundary>
+      <Renderer config={config} data={previewData} />
+    </ChartErrorBoundary>
+  );
 }

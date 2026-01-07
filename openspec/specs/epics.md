@@ -15,7 +15,8 @@ openspec/specs/
 │   ├── F05-theme.md
 │   ├── F06-data-source.md
 │   ├── F07-persistence.md
-│   └── F08-i18n.md
+│   ├── F08-i18n.md
+│   └── F09-chart-plugin.md
 └── technical/                  # 技術規格（非功能需求）
     └── T01-project-setup.md
 ```
@@ -24,16 +25,17 @@ openspec/specs/
 
 ## Feature Spec 總覽
 
-| Feature | 名稱 | 描述 | 優先順序 |
-|---------|------|------|----------|
-| **F01** | Dashboard CRUD | Dashboard 建立、編輯、刪除、列表 | P0 |
-| **F02** | Widget Layout | Widget 拖放佈局、調整大小 | P0 |
-| **F03** | Chart Rendering | ECharts 圖表渲染、基本圖表類型 | P0 |
-| **F04** | Chart Configuration | 圖表設定面板、動態表單 | P0 |
-| **F05** | Theme System | Light/Dark 主題切換 | P1 |
-| **F06** | Data Source | 資料源整合與管理 | P1 |
-| **F07** | Persistence | Dashboard 儲存與載入 | P1 |
-| **F08** | i18n | 多語系支援 (zh-TW / en) | P2 |
+| Feature | 名稱 | 描述 | 優先順序 | 狀態 |
+|---------|------|------|----------|------|
+| **F01** | Dashboard CRUD | Dashboard 建立、編輯、刪除、列表 | P0 | ✅ 完成 |
+| **F02** | Widget Layout | Widget 拖放佈局、調整大小 | P0 | ✅ 完成 |
+| **F03** | Chart Rendering | ECharts 圖表渲染、基本圖表類型 | P0 | ✅ 完成 |
+| **F04** | Chart Configuration | 圖表設定面板、動態表單 | P0 | ✅ 完成 |
+| **F05** | Theme System | Light/Dark 主題切換 | P1 | 待開發 |
+| **F06** | Data Source | 資料源整合與管理 | P1 | 待開發 |
+| **F07** | Persistence | Dashboard 儲存與載入 | P1 | ✅ 完成 |
+| **F08** | i18n | 多語系支援 (zh-TW / en) | P2 | 待開發 |
+| **F09** | Chart Plugin System | 圖表插件架構，支援擴展新圖表類型 | P1 | ✅ 完成 |
 
 ## Technical Spec 總覽
 
@@ -46,18 +48,19 @@ openspec/specs/
 ## 開發順序
 
 ```
-T01 → F01 → F02 → F03 → F04 → F07 → F06 → F05 → F08
-      └─────────────┬─────────────┘
-               MVP 核心功能
+T01 → F01 → F02 → F03 → F04 → F07 → F09 → F06 → F05 → F08
+      └─────────────┬─────────────┘     ✓
+               MVP 核心功能          已完成
 ```
 
 ### 順序說明
-1. **T01**: 技術基礎設施必須先完成
-2. **F01-F04**: MVP 核心功能，使用者可建立 Dashboard 並設定圖表
-3. **F07**: 儲存功能讓 MVP 完整可用
-4. **F06**: 資料源整合（可先用 Mock 資料）
-5. **F05**: 主題系統（錦上添花）
-6. **F08**: 多語系（最後處理）
+1. **T01**: 技術基礎設施必須先完成 ✅
+2. **F01-F04**: MVP 核心功能，使用者可建立 Dashboard 並設定圖表 ✅
+3. **F07**: 儲存功能讓 MVP 完整可用 ✅
+4. **F09**: Chart Plugin 架構重構，為擴展圖表類型鋪路 ✅
+5. **F06**: 資料源整合（可先用 Mock 資料）
+6. **F05**: 主題系統（錦上添花）
+7. **F08**: 多語系（最後處理）
 
 ---
 
@@ -117,7 +120,7 @@ T01 → F01 → F02 → F03 → F04 → F07 → F06 → F05 → F08
 
 ## 圖表類型擴展策略
 
-F03 (Chart Rendering) 採用漸進式設計：
+F03 (Chart Rendering) 搭配 **F09 (Chart Plugin System)** 採用漸進式設計：
 
 | 階段 | 圖表類型 | 優先順序 |
 |------|----------|----------|
@@ -125,9 +128,10 @@ F03 (Chart Rendering) 採用漸進式設計：
 | Phase 2 | Pie Chart, Area Chart | P1 |
 | Phase 3 | Scatter, Gauge, 其他 | P2 |
 
-每新增圖表類型需更新：
-1. `F03-chart-rendering.md` - 新增圖表渲染規格
-2. `F04-chart-config.md` - 新增對應設定欄位
+透過 Plugin System 新增圖表類型：
+1. 實作 `ChartPlugin` Interface
+2. 註冊至 `chartRegistry`
+3. 重新 Build 即可使用
 
 ---
 
@@ -136,7 +140,8 @@ F03 (Chart Rendering) 採用漸進式設計：
 MVP 完成後可按優先順序擴展：
 
 ### Phase 2 (P1)
-- 更多圖表類型 (Pie, Area)
+- ~~Chart Plugin System (F09)~~ ✅ 已完成
+- 更多圖表類型 (Pie, Area) - 透過 Plugin 新增（Area 已完成）
 - 主題系統 (F05)
 - 外部資料源整合 (F06)
 

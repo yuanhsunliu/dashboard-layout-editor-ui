@@ -1,5 +1,8 @@
 # F03: Chart Rendering
 
+## Status
+✅ **Implemented** - 2026-01-06
+
 ## Overview
 Widget 可以渲染 ECharts 圖表，支援多種圖表類型，並響應 Widget 大小變化自動調整。
 
@@ -10,20 +13,20 @@ Widget 可以渲染 ECharts 圖表，支援多種圖表類型，並響應 Widget
 ## Acceptance Criteria
 
 ### 圖表渲染
-- [ ] Widget 有設定 chartConfig 時渲染對應圖表
-- [ ] 圖表填滿 Widget 內容區域
-- [ ] 支援 Line Chart 和 Bar Chart（MVP）
+- [x] Widget 有設定 chartConfig 時渲染對應圖表
+- [x] 圖表填滿 Widget 內容區域
+- [x] 支援 Line Chart 和 Bar Chart（MVP）
 
 ### 響應式調整
-- [ ] Widget resize 時圖表自動 resize
-- [ ] 使用 ResizeObserver 或 react-grid-layout 回調
+- [x] Widget resize 時圖表自動 resize
+- [x] 使用 ResizeObserver（200ms debounce）
 
 ### Loading 與 Error 狀態
-- [ ] 資料載入中顯示 Skeleton / Spinner
-- [ ] 資料載入失敗顯示錯誤訊息與重試按鈕
+- [ ] 資料載入中顯示 Skeleton / Spinner（延後至 F06）
+- [ ] 資料載入失敗顯示錯誤訊息與重試按鈕（延後至 F06）
 
 ### 空白狀態
-- [ ] 尚未設定 chartConfig 顯示引導設定提示
+- [x] 尚未設定 chartConfig 顯示引導設定提示（含 onConfigClick callback）
 
 ## UI/UX Spec
 

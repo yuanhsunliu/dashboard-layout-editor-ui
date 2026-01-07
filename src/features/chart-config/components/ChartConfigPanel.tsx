@@ -11,10 +11,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ChartTypeSelector } from './ChartTypeSelector';
 import { DataSourceSelector } from './DataSourceSelector';
-import { FieldMappingForm } from './fields';
 import { ChartPreview } from './ChartPreview';
 import { getDataSources, getDataSourceById } from '../services/mockDataSources';
-import { chartConfigSchema } from '../schemas';
+import { chartRegistry } from '@/features/chart-plugins';
 import type { ChartConfig, ChartType } from '@/types/chart';
 
 interface ChartConfigPanelProps {
@@ -65,6 +64,11 @@ export function ChartConfigPanel({
     [dataSourceId]
   );
 
+  const currentPlugin = useMemo(
+    () => chartRegistry.getByType(chartType),
+    [chartType]
+  );
+
   const handleChartTypeChange = (type: ChartType) => {
     setChartType(type);
   };
@@ -75,7 +79,14 @@ export function ChartConfigPanel({
     setYAxisFields([]);
   };
 
+  const handleFieldsChange = (value: Record<string, unknown>) => {
+    if (typeof value.xAxisField === 'string') setXAxisField(value.xAxisField);
+    if (Array.isArray(value.yAxisFields)) setYAxisFields(value.yAxisFields as string[]);
+  };
+
   const handleSave = () => {
+    if (!currentPlugin) return;
+
     const formData = {
       chartType,
       title,
@@ -84,7 +95,7 @@ export function ChartConfigPanel({
       yAxisFields,
     };
 
-    const result = chartConfigSchema.safeParse(formData);
+    const result = currentPlugin.configSchema.safeParse(formData);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
@@ -105,6 +116,8 @@ export function ChartConfigPanel({
 
     onSave(config);
   };
+
+  const ConfigFields = currentPlugin?.ConfigFields;
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -139,13 +152,11 @@ export function ChartConfigPanel({
             error={errors.dataSourceId}
           />
 
-          {selectedDataSource && (
-            <FieldMappingForm
+          {selectedDataSource && ConfigFields && (
+            <ConfigFields
+              value={{ xAxisField, yAxisFields }}
+              onChange={handleFieldsChange}
               fields={selectedDataSource.fields}
-              xAxisField={xAxisField}
-              yAxisFields={yAxisFields}
-              onXAxisChange={setXAxisField}
-              onYAxisChange={setYAxisFields}
               errors={{
                 xAxisField: errors.xAxisField,
                 yAxisFields: errors.yAxisFields,
