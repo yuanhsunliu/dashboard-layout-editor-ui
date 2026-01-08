@@ -11,11 +11,13 @@ export const mockDataSources: DataSource[] = [
       { name: 'cost', type: 'number', label: '成本' },
     ],
     demoData: {
-      xAxis: ['1月', '2月', '3月', '4月', '5月', '6月'],
-      series: [
-        { name: '營收', data: [120, 200, 150, 80, 170, 210] },
-        { name: '利潤', data: [80, 140, 100, 50, 120, 160] },
-        { name: '成本', data: [40, 60, 50, 30, 50, 50] },
+      rows: [
+        { date: '1月', revenue: 120, profit: 80, cost: 40 },
+        { date: '2月', revenue: 200, profit: 140, cost: 60 },
+        { date: '3月', revenue: 150, profit: 100, cost: 50 },
+        { date: '4月', revenue: 80, profit: 50, cost: 30 },
+        { date: '5月', revenue: 170, profit: 120, cost: 50 },
+        { date: '6月', revenue: 210, profit: 160, cost: 50 },
       ],
     },
   },
@@ -28,10 +30,13 @@ export const mockDataSources: DataSource[] = [
       { name: 'newUsers', type: 'number', label: '新使用者' },
     ],
     demoData: {
-      xAxis: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      series: [
-        { name: '活躍使用者', data: [1200, 1350, 1100, 1450, 1600, 1800] },
-        { name: '新使用者', data: [200, 180, 220, 250, 300, 350] },
+      rows: [
+        { month: 'Jan', activeUsers: 1200, newUsers: 200 },
+        { month: 'Feb', activeUsers: 1350, newUsers: 180 },
+        { month: 'Mar', activeUsers: 1100, newUsers: 220 },
+        { month: 'Apr', activeUsers: 1450, newUsers: 250 },
+        { month: 'May', activeUsers: 1600, newUsers: 300 },
+        { month: 'Jun', activeUsers: 1800, newUsers: 350 },
       ],
     },
   },
@@ -44,10 +49,12 @@ export const mockDataSources: DataSource[] = [
       { name: 'sold', type: 'number', label: '已售' },
     ],
     demoData: {
-      xAxis: ['產品A', '產品B', '產品C', '產品D', '產品E'],
-      series: [
-        { name: '庫存', data: [150, 230, 180, 90, 120] },
-        { name: '已售', data: [80, 150, 120, 70, 95] },
+      rows: [
+        { product: '產品A', stock: 150, sold: 80 },
+        { product: '產品B', stock: 230, sold: 150 },
+        { product: '產品C', stock: 180, sold: 120 },
+        { product: '產品D', stock: 90, sold: 70 },
+        { product: '產品E', stock: 120, sold: 95 },
       ],
     },
   },

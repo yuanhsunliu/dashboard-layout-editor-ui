@@ -37,17 +37,17 @@ export function ChartPreview({
   const previewData = useMemo(() => {
     if (!dataSource || !xAxisField || yAxisFields.length === 0) return undefined;
 
-    const filteredSeries = dataSource.demoData.series.filter(s =>
-      yAxisFields.some(field => {
-        const fieldDef = dataSource.fields.find(f => f.name === field);
-        return fieldDef && s.name === fieldDef.label;
-      })
-    );
+    const { rows } = dataSource.demoData;
+    const xAxis = rows.map(row => String(row[xAxisField] ?? ''));
+    const series = yAxisFields.map(field => {
+      const fieldDef = dataSource.fields.find(f => f.name === field);
+      return {
+        name: fieldDef?.label ?? field,
+        data: rows.map(row => Number(row[field]) || 0),
+      };
+    });
 
-    return {
-      xAxis: dataSource.demoData.xAxis,
-      series: filteredSeries.length > 0 ? filteredSeries : dataSource.demoData.series.slice(0, yAxisFields.length),
-    };
+    return { xAxis, series };
   }, [dataSource, xAxisField, yAxisFields]);
 
   if (!isComplete) {

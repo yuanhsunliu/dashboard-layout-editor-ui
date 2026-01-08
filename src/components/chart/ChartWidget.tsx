@@ -16,19 +16,17 @@ export function ChartWidget({ chartConfig, onConfigClick }: ChartWidgetProps) {
     const dataSource = getDataSourceById(chartConfig.dataSourceId);
     if (!dataSource) return undefined;
 
-    const filteredSeries = dataSource.demoData.series.filter(s =>
-      chartConfig.yAxisFields.some(field => {
-        const fieldDef = dataSource.fields.find(f => f.name === field);
-        return fieldDef && s.name === fieldDef.label;
-      })
-    );
+    const { rows } = dataSource.demoData;
+    const xAxis = rows.map(row => String(row[chartConfig.xAxisField] ?? ''));
+    const series = chartConfig.yAxisFields.map(field => {
+      const fieldDef = dataSource.fields.find(f => f.name === field);
+      return {
+        name: fieldDef?.label ?? field,
+        data: rows.map(row => Number(row[field]) || 0),
+      };
+    });
 
-    return {
-      xAxis: dataSource.demoData.xAxis,
-      series: filteredSeries.length > 0 
-        ? filteredSeries 
-        : dataSource.demoData.series.slice(0, chartConfig.yAxisFields.length),
-    };
+    return { xAxis, series };
   }, [chartConfig]);
 
   if (!chartConfig) {

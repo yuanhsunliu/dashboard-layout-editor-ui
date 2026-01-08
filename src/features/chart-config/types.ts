@@ -4,21 +4,15 @@ export interface DataSourceField {
   label: string;
 }
 
-export interface DemoDataSeries {
-  name: string;
-  data: number[];
-}
-
-export interface DemoData {
-  xAxis: string[];
-  series: DemoDataSeries[];
-}
+export type DemoDataRow = Record<string, string | number>;
 
 export interface DataSource {
   id: string;
   name: string;
   fields: DataSourceField[];
-  demoData: DemoData;
+  demoData: {
+    rows: DemoDataRow[];
+  };
 }
 
 export interface ChartConfigFormData {
