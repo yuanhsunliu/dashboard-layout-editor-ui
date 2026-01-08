@@ -36,7 +36,7 @@ test.describe('Chart Configuration', () => {
         await page.getByTestId('widget-config-button').click();
 
         await expect(page.getByTestId('chart-config-panel')).toBeVisible();
-        await expect(page.getByText('圖表設定')).toBeVisible();
+        await expect(page.getByText('Widget 設定')).toBeVisible();
 
         await page.screenshot({ path: 'test-results/config-panel-open.png' });
       });
@@ -49,7 +49,7 @@ test.describe('Chart Configuration', () => {
       });
 
       test('Then it should display all form fields', async ({ page }) => {
-        await expect(page.getByLabel('圖表標題')).toBeVisible();
+        await expect(page.getByLabel('標題')).toBeVisible();
         await expect(page.getByTestId('chart-type-select')).toBeVisible();
         await expect(page.getByTestId('data-source-select')).toBeVisible();
 
@@ -142,7 +142,7 @@ test.describe('Chart Configuration', () => {
         await page.getByTestId('widget-config-button').click();
         await expect(page.getByTestId('chart-config-panel')).toBeVisible();
 
-        await page.getByLabel('圖表標題').fill('測試圖表');
+        await page.getByLabel('標題').fill('測試圖表');
 
         await page.getByTestId('chart-type-select').click();
         await page.getByTestId('chart-type-option-line').click();
@@ -170,7 +170,7 @@ test.describe('Chart Configuration', () => {
         await page.getByTestId('widget-config-button').click();
         await expect(page.getByTestId('chart-config-panel')).toBeVisible();
 
-        await page.getByLabel('圖表標題').fill('不應該保存');
+        await page.getByLabel('標題').fill('不應該保存');
 
         await page.getByTestId('config-cancel-button').click();
 
@@ -238,7 +238,7 @@ test.describe('Chart Configuration', () => {
         await page.getByTestId('widget-config-button').click();
         await expect(page.getByTestId('chart-config-panel')).toBeVisible();
 
-        await expect(page.getByLabel('圖表標題')).toHaveValue('現有圖表');
+        await expect(page.getByLabel('標題')).toHaveValue('現有圖表');
 
         await page.screenshot({ path: 'test-results/config-existing-values.png' });
       });
@@ -249,8 +249,8 @@ test.describe('Chart Configuration', () => {
         await page.getByTestId('widget-config-button').click();
         await expect(page.getByTestId('chart-config-panel')).toBeVisible();
 
-        await page.getByLabel('圖表標題').clear();
-        await page.getByLabel('圖表標題').fill('更新後的圖表');
+        await page.getByLabel('標題').clear();
+        await page.getByLabel('標題').fill('更新後的圖表');
 
         await page.getByTestId('chart-type-select').click();
         await page.getByTestId('chart-type-option-bar').click();

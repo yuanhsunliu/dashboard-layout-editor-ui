@@ -46,34 +46,54 @@ During development, new requirements may emerge. Follow this flow:
 ```
 New Requirement Proposal
     ↓
-Review & Confirm Proposal
+┌─────────────────────────────────────┐
+│  Stage 1: Create Change Proposal    │
+│  - Create openspec/changes/<id>/    │
+│  - Draft proposal.md, tasks.md      │
+│  - Draft spec deltas                │
+│  - Validate with openspec validate  │
+└─────────────────────────────────────┘
     ↓
-Update project.md? ──→ Yes → Update project.md
-    ↓ No                         ↓
-    ←─────────────────────────────
+┌─────────────────────────────────────┐
+│  Clarify Requirements               │
+│  - Review proposal with user        │
+│  - Ask clarifying questions         │
+│  - Confirm all spec details         │
+│  - Update proposal based on answers │
+└─────────────────────────────────────┘
     ↓
-Update Technical Specs? ──→ Yes → Add/Modify Technical Specs (TXX)
-    ↓ No                              ↓
-    ←─────────────────────────────────
+┌─────────────────────────────────────┐
+│  Update ./specs/ (Pre-Implementation)│
+│  - Update project.md if needed      │
+│  - Add/Modify Feature Specs (FXX)   │
+│  - Add/Modify Technical Specs (TXX) │
+│  - Update epics.md development order│
+└─────────────────────────────────────┘
     ↓
-Update Feature Specs? ──→ Yes → Add/Modify Feature Specs (FXX)
-    ↓ No                             ↓
-    ←────────────────────────────────
-    ↓
-Adjust Development Order? ──→ Yes → Re-prioritize in epics.md
-    ↓ No                              ↓
-    ←─────────────────────────────────
-    ↓
-Continue with OpenSpec Stage 1-3
+Continue with OpenSpec Stage 2-3
 ```
 
 **Checklist for New Proposals**:
-1. [ ] Proposal reviewed and confirmed
-2. [ ] Check if `project.md` needs updates (scope, constraints, conventions)
-3. [ ] Check if Technical Specs need updates (new TXX, infrastructure, non-functional requirements)
-4. [ ] Check if Feature Specs need updates (new FXX, modified feature)
-5. [ ] Check if development order needs adjustment (dependencies, priorities)
-6. [ ] Proceed to OpenSpec Stage 1 (Creating Changes)
+
+#### Phase 1: Create Proposal
+1. [ ] Create change directory under `openspec/changes/<change-id>/`
+2. [ ] Draft `proposal.md` with Why, What Changes, Impact
+3. [ ] Draft `tasks.md` with implementation checklist
+4. [ ] Draft spec deltas under `specs/` directory
+5. [ ] Validate with `openspec validate <change-id> --strict`
+
+#### Phase 2: Clarify Requirements
+6. [ ] Review proposal with user
+7. [ ] Ask clarifying questions for ambiguous requirements
+8. [ ] Confirm all spec details and design decisions
+9. [ ] Update proposal files based on confirmed answers
+
+#### Phase 3: Update Specs (Pre-Implementation)
+10. [ ] Check if `project.md` needs updates (scope, constraints, conventions)
+11. [ ] Check if Technical Specs need updates (new TXX, infrastructure)
+12. [ ] Check if Feature Specs need updates (new FXX in `specs/features/`)
+13. [ ] Check if `epics.md` development order needs adjustment
+14. [ ] Confirm proposal is ready for implementation
 
 ### MVP Principles
 
@@ -98,7 +118,10 @@ Track feature status in `epics.md`:
 ```
 Stage 0: Epic Planning (this extension)
     ↓
-Stage 1: Creating Changes (per feature)
+Stage 1: Creating Changes
+    ├── 1.1 Create Change Proposal (proposal.md, tasks.md, spec deltas)
+    ├── 1.2 Clarify Requirements (ask questions, confirm details)
+    └── 1.3 Update Specs (project.md, FXX, TXX, epics.md)
     ↓
 Stage 2: Implementing Changes
     ↓

@@ -20,10 +20,10 @@ export function ChartTypeSelector({ value, onChange, error }: ChartTypeSelectorP
 
   return (
     <div className="space-y-2">
-      <Label>圖表類型</Label>
+      <Label>Widget 類型</Label>
       <Select value={value} onValueChange={(v) => onChange(v as ChartType)}>
         <SelectTrigger data-testid="chart-type-select">
-          <SelectValue placeholder="選擇圖表類型" />
+          <SelectValue placeholder="選擇 Widget 類型" />
         </SelectTrigger>
         <SelectContent>
           {chartTypes.map((plugin) => {

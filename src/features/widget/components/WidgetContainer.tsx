@@ -10,7 +10,14 @@ interface WidgetContainerProps {
 }
 
 export function WidgetContainer({ widget, onDelete, onConfig, children }: WidgetContainerProps) {
-  const title = widget.chartConfig?.title || widget.chartConfig?.chartType || '未設定';
+  const getTitle = () => {
+    if (!widget.chartConfig) return '未設定';
+    if (widget.chartConfig.title) return widget.chartConfig.title;
+    if (widget.chartConfig.chartType === 'embed') return '嵌入報表';
+    return widget.chartConfig.chartType || '未設定';
+  };
+
+  const title = getTitle();
 
   return (
     <div className="flex flex-col h-full bg-card border rounded-lg shadow-sm overflow-hidden">

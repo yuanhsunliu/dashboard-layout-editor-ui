@@ -16,7 +16,8 @@ openspec/specs/
 │   ├── F06-data-source.md
 │   ├── F07-persistence.md
 │   ├── F08-i18n.md
-│   └── F09-chart-plugin.md
+│   ├── F09-chart-plugin.md
+│   └── F10-embed-widget.md
 └── technical/                  # 技術規格（非功能需求）
     └── T01-project-setup.md
 ```
@@ -36,6 +37,7 @@ openspec/specs/
 | **F07** | Persistence | Dashboard 儲存與載入 | P1 | ✅ 完成 |
 | **F08** | i18n | 多語系支援 (zh-TW / en) | P2 | 待開發 |
 | **F09** | Chart Plugin System | 圖表插件架構，支援擴展新圖表類型 | P1 | ✅ 完成 |
+| **F10** | Embed Widget | 嵌入外部報表 URL 至 Dashboard | P1 | 待開發 |
 
 ## Technical Spec 總覽
 
@@ -48,7 +50,7 @@ openspec/specs/
 ## 開發順序
 
 ```
-T01 → F01 → F02 → F03 → F04 → F07 → F09 → F06 → F05 → F08
+T01 → F01 → F02 → F03 → F04 → F07 → F09 → F10 → F06 → F05 → F08
       └─────────────┬─────────────┘     ✓
                MVP 核心功能          已完成
 ```
@@ -58,9 +60,10 @@ T01 → F01 → F02 → F03 → F04 → F07 → F09 → F06 → F05 → F08
 2. **F01-F04**: MVP 核心功能，使用者可建立 Dashboard 並設定圖表 ✅
 3. **F07**: 儲存功能讓 MVP 完整可用 ✅
 4. **F09**: Chart Plugin 架構重構，為擴展圖表類型鋪路 ✅
-5. **F06**: 資料源整合（可先用 Mock 資料）
-6. **F05**: 主題系統（錦上添花）
-7. **F08**: 多語系（最後處理）
+5. **F10**: Embed Widget，嵌入外部報表（基於 Plugin 架構）
+6. **F06**: 資料源整合（可先用 Mock 資料）
+7. **F05**: 主題系統（錦上添花）
+8. **F08**: 多語系（最後處理）
 
 ---
 

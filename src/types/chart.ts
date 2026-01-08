@@ -1,4 +1,4 @@
-export type ChartType = 'line' | 'bar' | 'area';
+export type ChartType = 'line' | 'bar' | 'area' | 'embed';
 
 export interface BaseChartConfig {
   chartType: ChartType;
@@ -22,4 +22,10 @@ export interface BarChartConfig extends BaseChartConfig {
   horizontal?: boolean;
 }
 
-export type ChartConfig = LineChartConfig | BarChartConfig;
+export interface EmbedConfig {
+  chartType: 'embed';
+  title?: string;
+  url: string;
+}
+
+export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig;

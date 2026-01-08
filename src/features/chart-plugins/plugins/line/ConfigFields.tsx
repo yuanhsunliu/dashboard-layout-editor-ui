@@ -16,7 +16,7 @@ export function LineChartConfigFields({
   fields,
   errors,
 }: ConfigFieldsProps<LineChartConfig>) {
-  const numberFields = fields.filter(f => f.type === 'number');
+  const numberFields = (fields ?? []).filter(f => f.type === 'number');
 
   const handleXAxisChange = (xAxisField: string) => {
     onChange({ ...value, xAxisField });
@@ -40,7 +40,7 @@ export function LineChartConfigFields({
             <SelectValue placeholder="選擇 X 軸欄位..." />
           </SelectTrigger>
           <SelectContent>
-            {fields.map((field) => (
+            {(fields ?? []).map((field) => (
               <SelectItem 
                 key={field.name} 
                 value={field.name}

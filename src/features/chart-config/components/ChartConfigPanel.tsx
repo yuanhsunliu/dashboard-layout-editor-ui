@@ -12,9 +12,10 @@ import { Label } from '@/components/ui/label';
 import { ChartTypeSelector } from './ChartTypeSelector';
 import { DataSourceSelector } from './DataSourceSelector';
 import { ChartPreview } from './ChartPreview';
+import { EmbedPreview } from './EmbedPreview';
 import { getDataSources, getDataSourceById } from '../services/mockDataSources';
 import { chartRegistry } from '@/features/chart-plugins';
-import type { ChartConfig, ChartType } from '@/types/chart';
+import type { ChartConfig, ChartType, EmbedConfig } from '@/types/chart';
 
 interface ChartConfigPanelProps {
   isOpen: boolean;
@@ -36,7 +37,10 @@ export function ChartConfigPanel({
   const [dataSourceId, setDataSourceId] = useState('');
   const [xAxisField, setXAxisField] = useState('');
   const [yAxisFields, setYAxisFields] = useState<string[]>([]);
+  const [embedUrl, setEmbedUrl] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const isEmbedType = chartType === 'embed';
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -44,15 +48,24 @@ export function ChartConfigPanel({
       if (initialConfig) {
         setChartType(initialConfig.chartType);
         setTitle(initialConfig.title || '');
-        setDataSourceId(initialConfig.dataSourceId);
-        setXAxisField(initialConfig.xAxisField);
-        setYAxisFields(initialConfig.yAxisFields);
+        if (initialConfig.chartType === 'embed') {
+          setEmbedUrl((initialConfig as EmbedConfig).url || '');
+          setDataSourceId('');
+          setXAxisField('');
+          setYAxisFields([]);
+        } else {
+          setDataSourceId('dataSourceId' in initialConfig ? initialConfig.dataSourceId : '');
+          setXAxisField('xAxisField' in initialConfig ? initialConfig.xAxisField : '');
+          setYAxisFields('yAxisFields' in initialConfig ? initialConfig.yAxisFields : []);
+          setEmbedUrl('');
+        }
       } else {
         setChartType('line');
         setTitle('');
         setDataSourceId('');
         setXAxisField('');
         setYAxisFields([]);
+        setEmbedUrl('');
       }
       setErrors({});
     }
@@ -71,6 +84,12 @@ export function ChartConfigPanel({
 
   const handleChartTypeChange = (type: ChartType) => {
     setChartType(type);
+    setErrors({});
+    if (type === 'embed') {
+      setTitle('嵌入報表');
+    } else if (chartType === 'embed') {
+      setTitle('');
+    }
   };
 
   const handleDataSourceChange = (id: string) => {
@@ -82,18 +101,29 @@ export function ChartConfigPanel({
   const handleFieldsChange = (value: Record<string, unknown>) => {
     if (typeof value.xAxisField === 'string') setXAxisField(value.xAxisField);
     if (Array.isArray(value.yAxisFields)) setYAxisFields(value.yAxisFields as string[]);
+    if (typeof value.url === 'string') setEmbedUrl(value.url);
   };
 
   const handleSave = () => {
     if (!currentPlugin) return;
 
-    const formData = {
-      chartType,
-      title,
-      dataSourceId,
-      xAxisField,
-      yAxisFields,
-    };
+    let formData: Record<string, unknown>;
+    
+    if (isEmbedType) {
+      formData = {
+        chartType,
+        title: title || '嵌入報表',
+        url: embedUrl,
+      };
+    } else {
+      formData = {
+        chartType,
+        title,
+        dataSourceId,
+        xAxisField,
+        yAxisFields,
+      };
+    }
 
     const result = currentPlugin.configSchema.safeParse(formData);
     if (!result.success) {
@@ -106,15 +136,7 @@ export function ChartConfigPanel({
       return;
     }
 
-    const config: ChartConfig = {
-      chartType,
-      title: title || undefined,
-      dataSourceId,
-      xAxisField,
-      yAxisFields,
-    } as ChartConfig;
-
-    onSave(config);
+    onSave(result.data as ChartConfig);
   };
 
   const ConfigFields = currentPlugin?.ConfigFields;
@@ -127,50 +149,66 @@ export function ChartConfigPanel({
         onInteractOutside={(e) => e.preventDefault()}
       >
         <SheetHeader>
-          <SheetTitle>圖表設定</SheetTitle>
+          <SheetTitle>Widget 設定</SheetTitle>
         </SheetHeader>
 
         <div className="space-y-6 py-6">
+          <ChartTypeSelector value={chartType} onChange={handleChartTypeChange} error={errors.chartType} />
+
           <div className="space-y-2">
-            <Label htmlFor="chart-title">圖表標題</Label>
+            <Label htmlFor="chart-title">標題</Label>
             <Input
               id="chart-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="輸入圖表標題..."
+              placeholder={isEmbedType ? '嵌入報表' : '輸入標題...'}
               maxLength={50}
               data-testid="chart-title-input"
             />
           </div>
 
-          <ChartTypeSelector value={chartType} onChange={handleChartTypeChange} error={errors.chartType} />
+          {isEmbedType ? (
+            <>
+              {ConfigFields && (
+                <ConfigFields
+                  value={{ url: embedUrl }}
+                  onChange={handleFieldsChange}
+                  fields={[]}
+                  errors={{ url: errors.url }}
+                />
+              )}
+              <EmbedPreview url={embedUrl} title={title} />
+            </>
+          ) : (
+            <>
+              <DataSourceSelector
+                dataSources={dataSources}
+                value={dataSourceId}
+                onChange={handleDataSourceChange}
+                error={errors.dataSourceId}
+              />
 
-          <DataSourceSelector
-            dataSources={dataSources}
-            value={dataSourceId}
-            onChange={handleDataSourceChange}
-            error={errors.dataSourceId}
-          />
+              {selectedDataSource && ConfigFields && (
+                <ConfigFields
+                  value={{ xAxisField, yAxisFields }}
+                  onChange={handleFieldsChange}
+                  fields={selectedDataSource.fields}
+                  errors={{
+                    xAxisField: errors.xAxisField,
+                    yAxisFields: errors.yAxisFields,
+                  }}
+                />
+              )}
 
-          {selectedDataSource && ConfigFields && (
-            <ConfigFields
-              value={{ xAxisField, yAxisFields }}
-              onChange={handleFieldsChange}
-              fields={selectedDataSource.fields}
-              errors={{
-                xAxisField: errors.xAxisField,
-                yAxisFields: errors.yAxisFields,
-              }}
-            />
+              <ChartPreview
+                chartType={chartType}
+                dataSource={selectedDataSource}
+                xAxisField={xAxisField}
+                yAxisFields={yAxisFields}
+                title={title}
+              />
+            </>
           )}
-
-          <ChartPreview
-            chartType={chartType}
-            dataSource={selectedDataSource}
-            xAxisField={xAxisField}
-            yAxisFields={yAxisFields}
-            title={title}
-          />
         </div>
 
         <SheetFooter className="flex gap-2">

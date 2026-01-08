@@ -151,20 +151,27 @@ test.describe('Dashboard Management', () => {
 ## Domain Context
 
 ### 核心概念
-- **Dashboard**: 一個報表頁面，包含多個圖表方格
-- **Grid Cell / Widget**: 單一圖表的容器，可調整大小與位置
+- **Dashboard**: 一個報表頁面，包含多個 Widget
+- **Grid Cell / Widget**: 單一內容的容器，可調整大小與位置
+- **Chart Widget**: 圖表類型的 Widget，使用 ECharts 呈現資料視覺化
+- **Embed Widget**: 嵌入類型的 Widget，透過 iframe 嵌入外部報表 URL
 - **Chart Config**: 圖表設定，包含資料源、圖表類型、軸線對應
 - **Data Source**: 資料來源，提供圖表所需的數據
 - **Theme**: 視覺主題，影響整個 Dashboard 的配色
 
-### 圖表類型
-圖表類型透過 **Chart Plugin System** 擴展，開發人員可按照規範實作新的圖表插件：
+### Widget 類型
+Widget 類型透過 **Chart Plugin System** 擴展，開發人員可按照規範實作新的插件：
+
+#### 圖表類型
 - 折線圖 (Line Chart) ✅
 - 長條圖 (Bar Chart) ✅
+- 面積圖 (Area Chart) ✅
 - 圓餅圖 (Pie Chart)
-- 面積圖 (Area Chart)
 - 散點圖 (Scatter Chart)
 - 更多 ECharts 支援的類型...
+
+#### 其他類型
+- 嵌入報表 (Embed Widget) - 透過 URL 嵌入外部報表
 
 ### Chart Plugin System
 > Build-time 插件機制，讓開發人員可以擴展圖表類型

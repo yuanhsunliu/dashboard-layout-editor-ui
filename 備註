@@ -1,4 +1,4 @@
-must 進行 playwright BDD test, 結果給我看 html 格式 report.
+實現這個變更, MUST 進行 playwright BDD test, 結果給我看 html 格式 report.
 測試要留畫面截圖, 要確認截圖可以在 test report 上正確的看到, 
-有問題 must 修正到好. 
+有問題 MUST 修正到好. 
 最後幫我記錄你花了多少時間實現這個變更

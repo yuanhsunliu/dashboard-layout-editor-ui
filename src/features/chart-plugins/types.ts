@@ -5,7 +5,7 @@ import type { DataSourceField } from '@/features/chart-config/types';
 
 export interface BaseChartConfig {
   chartType: string;
-  dataSourceId: string;
+  dataSourceId?: string;
 }
 
 export interface ChartRendererProps<TConfig extends BaseChartConfig = BaseChartConfig> {
@@ -16,7 +16,7 @@ export interface ChartRendererProps<TConfig extends BaseChartConfig = BaseChartC
 export interface ConfigFieldsProps<TConfig extends BaseChartConfig = BaseChartConfig> {
   value: Partial<TConfig>;
   onChange: (value: Partial<TConfig>) => void;
-  fields: DataSourceField[];
+  fields?: DataSourceField[];
   errors?: Record<string, string>;
 }
 

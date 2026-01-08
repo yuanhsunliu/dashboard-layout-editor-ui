@@ -13,7 +13,7 @@ export function ChartEmpty({ onConfigClick }: ChartEmptyProps) {
     >
       <BarChart3 className="h-10 w-10 mb-2" />
       <p className="text-sm">點擊設定</p>
-      <p className="text-xs">選擇圖表類型</p>
+      <p className="text-xs">選擇 Widget 類型</p>
     </div>
   );
 }

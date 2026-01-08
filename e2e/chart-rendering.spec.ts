@@ -35,7 +35,7 @@ test.describe('Chart Rendering', () => {
       test('Then the empty state should be displayed with setup guidance', async ({ page }) => {
         await expect(page.getByTestId('chart-empty')).toBeVisible();
         await expect(page.getByText('點擊設定')).toBeVisible();
-        await expect(page.getByText('選擇圖表類型')).toBeVisible();
+        await expect(page.getByText('選擇 Widget 類型')).toBeVisible();
         
         await page.screenshot({ path: 'test-results/chart-empty-state.png' });
       });

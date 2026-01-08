@@ -12,13 +12,17 @@ interface ChartWidgetProps {
 export function ChartWidget({ chartConfig, onConfigClick }: ChartWidgetProps) {
   const chartData = useMemo(() => {
     if (!chartConfig) return undefined;
+    if (chartConfig.chartType === 'embed') return undefined;
     
     const dataSource = getDataSourceById(chartConfig.dataSourceId);
     if (!dataSource) return undefined;
 
     const { rows } = dataSource.demoData;
-    const xAxis = rows.map(row => String(row[chartConfig.xAxisField] ?? ''));
-    const series = chartConfig.yAxisFields.map(field => {
+    const xAxisField = 'xAxisField' in chartConfig ? chartConfig.xAxisField : '';
+    const yAxisFields = 'yAxisFields' in chartConfig ? chartConfig.yAxisFields : [];
+    
+    const xAxis = rows.map(row => String(row[xAxisField] ?? ''));
+    const series = yAxisFields.map(field => {
       const fieldDef = dataSource.fields.find(f => f.name === field);
       return {
         name: fieldDef?.label ?? field,
