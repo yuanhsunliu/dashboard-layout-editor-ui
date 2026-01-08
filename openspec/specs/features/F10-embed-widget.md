@@ -1,7 +1,14 @@
 # F10: Embed Widget
 
 ## Status
-- [ ] Not Started
+- [x] Completed
+
+## Status History
+| Date | Status | Notes |
+|------|--------|-------|
+| 2026-01-08 | ✅ Completed | Archived as 2026-01-08-add-embed-widget |
+| 2026-01-08 | 🔄 In Progress | Implementation started |
+| 2026-01-08 | 📝 Planned | Initial spec created |
 
 ## Overview
 使用者可以透過 URL 嵌入外部報表（如 Power BI、Tableau、Grafana、Metabase 等）至 Dashboard 中，與自建的 Chart Widget 並存使用。
@@ -15,36 +22,36 @@
 ## Acceptance Criteria
 
 ### Widget 類型選擇
-- [ ] 將「圖表類型」選擇器改為「Widget 類型」選擇器
-- [ ] 可選擇「嵌入報表」作為 Widget 類型
-- [ ] 選擇後顯示 Embed 專屬設定欄位
+- [x] 將「圖表類型」選擇器改為「Widget 類型」選擇器
+- [x] 可選擇「嵌入報表」作為 Widget 類型
+- [x] 選擇後顯示 Embed 專屬設定欄位
 
 ### 設定欄位
-- [ ] 顯示 URL 輸入欄位（必填）
-- [ ] 顯示標題輸入欄位（選填，預設「嵌入報表」）
-- [ ] 隱藏資料來源、X軸、Y軸等圖表相關欄位
+- [x] 顯示 URL 輸入欄位（必填）
+- [x] 顯示標題輸入欄位（選填，預設「嵌入報表」）
+- [x] 隱藏資料來源、X軸、Y軸等圖表相關欄位
 
 ### URL 驗證
-- [ ] 允許 HTTP 和 HTTPS URL
-- [ ] 無效 URL 格式顯示驗證錯誤
-- [ ] 無效時無法儲存設定
+- [x] 允許 HTTP 和 HTTPS URL
+- [x] 無效 URL 格式顯示驗證錯誤
+- [x] 無效時無法儲存設定
 
 ### iframe 嵌入
-- [ ] 使用 iframe 載入設定的 URL
-- [ ] iframe 自動填滿 Widget 區域
-- [ ] 不設置 sandbox 屬性限制
-- [ ] 顯示 loading skeleton 載入狀態
-- [ ] 不主動偵測嵌入失敗
+- [x] 使用 iframe 載入設定的 URL
+- [x] iframe 自動填滿 Widget 區域
+- [x] 不設置 sandbox 屬性限制
+- [x] 顯示 loading skeleton 載入狀態
+- [x] 不主動偵測嵌入失敗
 
 ### 預覽
-- [ ] 輸入有效 URL 後即時顯示預覽
+- [x] 輸入有效 URL 後即時顯示預覽
 
 ### 空白狀態
-- [ ] 未設定 URL 時沿用 Chart Widget 空白狀態樣式
+- [x] 未設定 URL 時沿用 Chart Widget 空白狀態樣式
 
 ### 標題顯示
-- [ ] Widget 標題列顯示使用者設定的標題
-- [ ] 標題為空時顯示「嵌入報表」
+- [x] Widget 標題列顯示使用者設定的標題
+- [x] 標題為空時顯示「嵌入報表」
 
 ## UI/UX Spec
 
