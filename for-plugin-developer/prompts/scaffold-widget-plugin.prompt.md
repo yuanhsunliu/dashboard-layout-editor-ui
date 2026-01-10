@@ -58,6 +58,12 @@ $ARGUMENTS
 5. **Create index.ts**:
    - Import icon from `lucide-react`
    - Export `<Name>Plugin` implementing `ChartPlugin` interface
+   - **MUST** include `configBehavior` with appropriate settings:
+     - `requiresDataSource`: Does the widget need a data source?
+     - `showTitleInput`: Should the title input be shown?
+     - `previewHeight`: Preview area height ('sm' | 'md' | 'lg')
+     - `getInitialPluginConfig()`: Return initial field values when DataSource changes
+     - `isPreviewReady()`: Return true when preview can be shown
    - Export config type
 
 6. **Register the plugin**:
@@ -83,6 +89,7 @@ $ARGUMENTS
 - [ ] ConfigFields handles empty select states correctly (no `SelectItem value=""`)
 - [ ] Plugin is registered in registry.ts
 - [ ] ChartType is updated in chart.ts
+- [ ] **configBehavior is defined** with all required properties
 - [ ] `locales.ts` created with zh-TW and en translations
 - [ ] Plugin exports include `locales` property
 - [ ] Components use `useTranslation('<plugin-type>')` for i18n

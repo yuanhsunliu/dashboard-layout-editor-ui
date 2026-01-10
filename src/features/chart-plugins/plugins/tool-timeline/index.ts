@@ -15,6 +15,26 @@ export const ToolTimelinePlugin: ChartPlugin<ToolTimelineConfig> = {
   Renderer: ToolTimelineRenderer,
   supportedInteractions: ['click'],
   locales: toolTimelineLocales,
+  configBehavior: {
+    requiresDataSource: true,
+    showTitleInput: true,
+    previewHeight: 'lg',
+    getInitialPluginConfig: () => ({
+      toolIdField: '',
+      startTimeField: '',
+      endTimeField: '',
+      statusField: '',
+      statusColors: [],
+      kpiFields: [],
+      tooltip: { enabled: true },
+    }),
+    isPreviewReady: ({ pluginConfig, dataSource }) =>
+      !!dataSource &&
+      !!pluginConfig.toolIdField &&
+      !!pluginConfig.startTimeField &&
+      !!pluginConfig.endTimeField &&
+      !!pluginConfig.statusField,
+  },
 };
 
 export { toolTimelineConfigSchema, type ToolTimelineConfig };

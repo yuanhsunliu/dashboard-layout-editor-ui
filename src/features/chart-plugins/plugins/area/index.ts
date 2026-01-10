@@ -12,6 +12,17 @@ export const AreaChartPlugin: ChartPlugin<AreaChartConfig> = {
   configSchema: areaChartConfigSchema,
   ConfigFields: AreaChartConfigFields,
   Renderer: AreaChartRenderer,
+  configBehavior: {
+    requiresDataSource: true,
+    showTitleInput: true,
+    previewHeight: 'md',
+    getInitialPluginConfig: () => ({ xAxisField: '', yAxisFields: [] }),
+    isPreviewReady: ({ pluginConfig, dataSource }) =>
+      !!dataSource &&
+      !!pluginConfig.xAxisField &&
+      Array.isArray(pluginConfig.yAxisFields) &&
+      pluginConfig.yAxisFields.length > 0,
+  },
 };
 
 export type { AreaChartConfig };

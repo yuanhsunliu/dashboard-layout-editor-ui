@@ -161,8 +161,24 @@ interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> {
   configSchema: z.ZodSchema<TConfig>;           // Zod schema
   ConfigFields: ComponentType<ConfigFieldsProps<TConfig>>;
   Renderer: ComponentType<ChartRendererProps<TConfig>>;
+  configBehavior: PluginConfigBehavior;         // UI behavior (REQUIRED)
   supportedInteractions?: ('click' | 'brush' | 'drilldown')[];
   locales?: PluginLocales;         // 自包含式 i18n 資源
+}
+
+interface PluginConfigBehavior {
+  requiresDataSource: boolean;     // Show DataSource selector?
+  showTitleInput: boolean;         // Show Title input in config panel?
+  previewHeight: 'sm' | 'md' | 'lg';  // Preview area height (h-40/h-48/h-64)
+  
+  // Called when DataSource changes - return initial pluginConfig values
+  getInitialPluginConfig: () => Record<string, unknown>;
+  
+  // Determine if preview should be shown
+  isPreviewReady: (params: {
+    pluginConfig: Record<string, unknown>;
+    dataSource?: DataSource;
+  }) => boolean;
 }
 
 interface BaseChartConfig {
@@ -174,6 +190,18 @@ type PluginLocales = {
   'zh-TW': Record<string, string>;
   'en': Record<string, string>;
 };
+```
+
+### configBehavior Reference
+
+| Plugin Type | requiresDataSource | showTitleInput | previewHeight |
+|-------------|-------------------|----------------|---------------|
+| line, bar, area | `true` | `true` | `'md'` |
+| embed | `false` | `true` | `'md'` |
+| kpi-card | `false` | `false` | `'sm'` |
+| kpi-card-dynamic | `true` | `false` | `'sm'` |
+| ai-comment | `false` | `false` | `'sm'` |
+| tool-timeline | `true` | `true` | `'lg'` |
 ```
 
 ## Schema Definition (schema.ts)
@@ -339,12 +367,13 @@ export function MyWidgetConfigFields({
 2. Export plugin as named export `<Name>Plugin`
 3. Export config type for external use
 4. Include `locales` if plugin has translatable text
+5. **MUST** include `configBehavior` with appropriate settings
 
 ### Example
 
 ```typescript
 import { LayoutGrid } from 'lucide-react';
-import type { ChartPlugin } from '../../types';
+import type { ChartPlugin, DataSource } from '../../types';
 import { myWidgetConfigSchema, type MyWidgetConfig } from './schema';
 import { MyWidgetRenderer } from './MyWidgetRenderer';
 import { MyWidgetConfigFields } from './ConfigFields';
@@ -359,6 +388,28 @@ export const MyWidgetPlugin: ChartPlugin<MyWidgetConfig> = {
   ConfigFields: MyWidgetConfigFields,
   Renderer: MyWidgetRenderer,
   locales: myWidgetLocales,  // 自包含式 i18n
+  
+  // UI 行為設定（必要）
+  configBehavior: {
+    requiresDataSource: true,      // 是否需要資料源選擇器
+    showTitleInput: true,          // 是否顯示標題輸入框
+    previewHeight: 'md',           // 預覽區域高度 ('sm' | 'md' | 'lg')
+    
+    // 當 DataSource 變更時，回傳欄位的初始值
+    getInitialPluginConfig: () => ({
+      someField: '',
+      anotherField: '',
+    }),
+    
+    // 判斷預覽是否可顯示
+    isPreviewReady: ({ pluginConfig, dataSource }) => {
+      return !!(
+        dataSource &&
+        pluginConfig.someField &&
+        pluginConfig.anotherField
+      );
+    },
+  },
 };
 
 export type { MyWidgetConfig };

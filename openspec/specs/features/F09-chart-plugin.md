@@ -37,6 +37,13 @@
 ### 開發文件
 - [x] 提供 PLUGIN_DEVELOPMENT.md 說明 Plugin 開發流程
 
+### Plugin Config Behavior（2026-01-XX 新增）
+- [x] ChartPlugin 介面新增 `configBehavior` 屬性
+- [x] 所有 8 個 plugin 定義 configBehavior 設定
+- [x] ChartConfigPanel 根據 configBehavior 動態顯示 UI
+- [x] ChartPreview 使用 isPreviewReady() 判斷預覽顯示
+- [x] 新增 plugin 無需修改 ChartConfigPanel 或 ChartPreview
+
 ### 額外完成
 - [x] 新增 Area Chart Plugin（驗證 Plugin 架構可擴展性）
 - [x] 新增 Embed Widget Plugin（嵌入外部報表）
@@ -77,6 +84,19 @@ interface ConfigFieldsProps<TConfig extends BaseChartConfig> {
   errors?: Record<string, string>;
 }
 
+// UI 行為描述（2026-01-XX 新增）
+interface PluginConfigBehavior {
+  requiresDataSource: boolean;     // 是否需要 DataSource 選擇器
+  showTitleInput: boolean;         // 是否顯示 Title 輸入框
+  previewHeight: 'sm' | 'md' | 'lg';  // 預覽區域高度
+  
+  getInitialPluginConfig: () => Record<string, unknown>;  // DataSource 變更時的初始值
+  isPreviewReady: (params: {        // 判斷預覽是否可顯示
+    pluginConfig: Record<string, unknown>;
+    dataSource?: DataSource;
+  }) => boolean;
+}
+
 interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> {
   // Meta
   type: string;
@@ -90,6 +110,9 @@ interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> {
   
   // Rendering
   Renderer: React.ComponentType<ChartRendererProps<TConfig>>;
+  
+  // UI Behavior（必要）
+  configBehavior: PluginConfigBehavior;
 }
 ```
 

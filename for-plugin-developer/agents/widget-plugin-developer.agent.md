@@ -99,8 +99,17 @@ interface ChartPlugin<TConfig extends BaseChartConfig> {
   configSchema: z.ZodSchema<TConfig>;
   ConfigFields: ComponentType<ConfigFieldsProps<TConfig>>;
   Renderer: ComponentType<ChartRendererProps<TConfig>>;
+  configBehavior: PluginConfigBehavior;  // UI behavior (REQUIRED)
   supportedInteractions?: ('click' | 'brush' | 'drilldown')[];
   locales?: PluginLocales;         // 自包含式 i18n 資源
+}
+
+interface PluginConfigBehavior {
+  requiresDataSource: boolean;     // Show DataSource selector?
+  showTitleInput: boolean;         // Show Title input in config panel?
+  previewHeight: 'sm' | 'md' | 'lg';  // Preview height (h-40/h-48/h-64)
+  getInitialPluginConfig: () => Record<string, unknown>;  // Reset values on DataSource change
+  isPreviewReady: (params: { pluginConfig: Record<string, unknown>; dataSource?: DataSource }) => boolean;
 }
 
 interface BaseChartConfig {
@@ -128,6 +137,18 @@ interface ConfigFieldsProps<TConfig> {
   errors?: Record<string, string>;
   availableWidgets?: Array<{ id: string; title: string }>;
 }
+```
+
+### configBehavior Reference
+
+| Plugin Type | requiresDataSource | showTitleInput | previewHeight |
+|-------------|-------------------|----------------|---------------|
+| line, bar, area | `true` | `true` | `'md'` |
+| embed | `false` | `true` | `'md'` |
+| kpi-card | `false` | `false` | `'sm'` |
+| kpi-card-dynamic | `true` | `false` | `'sm'` |
+| ai-comment | `false` | `false` | `'sm'` |
+| tool-timeline | `true` | `true` | `'lg'` |
 ```
 
 ## Key Rules You Follow
@@ -212,7 +233,7 @@ useEffect(() => {
 2. **Design Schema**: Create Zod schema with all fields and proper validation
 3. **Build Renderer**: Create the display component with all states handled
 4. **Build ConfigFields**: Create the configuration form with shadcn/ui components
-5. **Create Plugin Export**: Wire everything together in index.ts
+5. **Create Plugin Export**: Wire everything together in index.ts, **including configBehavior**
 6. **Register Plugin**: Add to registry and update types
 7. **Write Tests**: Create E2E tests covering key scenarios
 

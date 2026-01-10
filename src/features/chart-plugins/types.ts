@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import type { ComponentType } from 'react';
 import type { DemoData } from '@/components/chart/demoData';
-import type { DataSourceField } from '@/features/chart-config/types';
+import type { DataSourceField, DataSource } from '@/features/chart-config/types';
 import type { DashboardFilter, ChartInteractionEvent } from '@/types/filter';
 
 export interface BaseChartConfig {
@@ -34,6 +34,17 @@ export type PluginLocales = {
   'en': Record<string, string>;
 };
 
+export interface PluginConfigBehavior {
+  requiresDataSource: boolean;
+  showTitleInput: boolean;
+  previewHeight: 'sm' | 'md' | 'lg';
+  getInitialPluginConfig: () => Record<string, unknown>;
+  isPreviewReady: (params: {
+    pluginConfig: Record<string, unknown>;
+    dataSource?: DataSource;
+  }) => boolean;
+}
+
 export interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> {
   type: string;
   name: string;
@@ -51,4 +62,9 @@ export interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> 
    * 使用方式: useTranslation(plugin.type)
    */
   locales?: PluginLocales;
+  /**
+   * Plugin 在設定面板中的 UI 行為描述
+   * ChartConfigPanel 和 ChartPreview 根據此設定動態調整 UI
+   */
+  configBehavior: PluginConfigBehavior;
 }

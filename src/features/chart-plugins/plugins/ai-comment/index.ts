@@ -12,6 +12,13 @@ export const AiCommentPlugin: ChartPlugin<AiCommentConfig> = {
   configSchema: aiCommentConfigSchema,
   ConfigFields: AiCommentConfigFields as ChartPlugin<AiCommentConfig>['ConfigFields'],
   Renderer: AiCommentRenderer as ChartPlugin<AiCommentConfig>['Renderer'],
+  configBehavior: {
+    requiresDataSource: false,
+    showTitleInput: false,
+    previewHeight: 'sm',
+    getInitialPluginConfig: () => ({ targetWidgetId: '' }),
+    isPreviewReady: () => true,
+  },
 };
 
 export { aiCommentConfigSchema, type AiCommentConfig };

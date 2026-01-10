@@ -12,6 +12,13 @@ export const EmbedPlugin: ChartPlugin<EmbedConfigType> = {
   configSchema: embedConfigSchema,
   ConfigFields: EmbedConfigFields,
   Renderer: EmbedRenderer,
+  configBehavior: {
+    requiresDataSource: false,
+    showTitleInput: true,
+    previewHeight: 'md',
+    getInitialPluginConfig: () => ({ url: '' }),
+    isPreviewReady: ({ pluginConfig }) => !!pluginConfig.url,
+  },
 };
 
 export type { EmbedConfigType };

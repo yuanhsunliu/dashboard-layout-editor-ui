@@ -42,11 +42,13 @@ export function ChartConfigPanel({
   const [pluginConfig, setPluginConfig] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const isEmbedType = chartType === 'embed';
-  const isKpiCardType = chartType === 'kpi-card';
-  const isKpiCardDynamicType = chartType === 'kpi-card-dynamic';
+  const currentPlugin = useMemo(
+    () => chartRegistry.getByType(chartType),
+    [chartType]
+  );
+
+  const configBehavior = currentPlugin?.configBehavior;
   const isAiCommentType = chartType === 'ai-comment';
-  const isToolTimelineType = chartType === 'tool-timeline';
 
   const availableWidgetsForAiComment = useMemo(() => {
     return widgets
@@ -125,15 +127,27 @@ export function ChartConfigPanel({
     [dataSourceId]
   );
 
-  const currentPlugin = useMemo(
-    () => chartRegistry.getByType(chartType),
-    [chartType]
-  );
-
   const handleChartTypeChange = (type: ChartType) => {
+    const oldPlugin = currentPlugin;
+    const newPlugin = chartRegistry.getByType(type);
+    
     setChartType(type);
     setErrors({});
-    setPluginConfig({});
+    
+    if (newPlugin && oldPlugin) {
+      const oldBehavior = oldPlugin.configBehavior;
+      const newBehavior = newPlugin.configBehavior;
+      
+      if (oldBehavior.requiresDataSource !== newBehavior.requiresDataSource) {
+        setPluginConfig(newBehavior.getInitialPluginConfig());
+        if (!newBehavior.requiresDataSource) {
+          setDataSourceId('');
+        }
+      }
+    } else if (newPlugin) {
+      setPluginConfig(newPlugin.configBehavior.getInitialPluginConfig());
+    }
+    
     if (type === 'embed') {
       setTitle('嵌入報表');
     } else if (chartType === 'embed') {
@@ -143,74 +157,22 @@ export function ChartConfigPanel({
 
   const handleDataSourceChange = (id: string) => {
     setDataSourceId(id);
-    setPluginConfig({ xAxisField: '', yAxisFields: [] });
-  };
-
-  const handleFieldsChange = (value: Record<string, unknown>) => {
-    setPluginConfig((prev) => ({ ...prev, ...value }));
+    if (currentPlugin) {
+      setPluginConfig(currentPlugin.configBehavior.getInitialPluginConfig());
+    }
   };
 
   const handleSave = () => {
     if (!currentPlugin) return;
 
-    let formData: Record<string, unknown>;
-    
-    if (isEmbedType) {
-      formData = {
-        chartType,
-        title: title || '嵌入報表',
-        url: pluginConfig.url || '',
-      };
-    } else if (isKpiCardType) {
-      const valueNum = pluginConfig.value !== undefined ? Number(pluginConfig.value) : undefined;
-      const compareNum = pluginConfig.compareValue !== undefined ? Number(pluginConfig.compareValue) : undefined;
-      formData = {
-        chartType,
-        title,
-        value: valueNum,
-        compareValue: compareNum,
-        fontSize: pluginConfig.fontSize || 'md',
-        format: pluginConfig.format || {},
-        conditionalColor: pluginConfig.conditionalColor,
-      };
-    } else if (isKpiCardDynamicType) {
-      formData = {
-        chartType,
-        title,
-        dataSourceId,
-        valueField: pluginConfig.valueField || '',
-        showTrend: pluginConfig.showTrend || false,
-        fontSize: pluginConfig.fontSize || 'md',
-        format: pluginConfig.format || {},
-        conditionalColor: pluginConfig.conditionalColor,
-      };
-    } else if (isAiCommentType) {
-      formData = {
-        chartType,
-        title,
-        targetWidgetId: pluginConfig.targetWidgetId || '',
-      };
-    } else if (isToolTimelineType) {
-      formData = {
-        chartType,
-        title,
-        dataSourceId,
-        toolIdField: pluginConfig.toolIdField || '',
-        startTimeField: pluginConfig.startTimeField || '',
-        endTimeField: pluginConfig.endTimeField || '',
-        statusField: pluginConfig.statusField || '',
-        statusColors: pluginConfig.statusColors || [],
-        kpiFields: pluginConfig.kpiFields || [],
-        tooltip: pluginConfig.tooltip || { enabled: true },
-      };
-    } else {
-      formData = {
-        chartType,
-        title,
-        dataSourceId,
-        xAxisField: pluginConfig.xAxisField || '',
-        yAxisFields: pluginConfig.yAxisFields || [],
-      };
+    const formData: Record<string, unknown> = {
+      chartType,
+      title,
+      ...pluginConfig,
+    };
+
+    if (configBehavior?.requiresDataSource) {
+      formData.dataSourceId = dataSourceId;
     }
 
     const result = currentPlugin.configSchema.safeParse(formData);
@@ -230,50 +192,9 @@ export function ChartConfigPanel({
   const ConfigFields = currentPlugin?.ConfigFields;
 
   const getConfigFieldsValue = () => {
-    if (isEmbedType) {
-      return { url: pluginConfig.url || '' };
-    }
-    if (isKpiCardType) {
-      return {
-        title,
-        value: pluginConfig.value,
-        compareValue: pluginConfig.compareValue,
-        fontSize: pluginConfig.fontSize || 'md',
-        format: pluginConfig.format || {},
-        conditionalColor: pluginConfig.conditionalColor,
-      };
-    }
-    if (isKpiCardDynamicType) {
-      return {
-        title,
-        valueField: pluginConfig.valueField || '',
-        showTrend: pluginConfig.showTrend || false,
-        fontSize: pluginConfig.fontSize || 'md',
-        format: pluginConfig.format || {},
-        conditionalColor: pluginConfig.conditionalColor,
-      };
-    }
-    if (isAiCommentType) {
-      return {
-        title,
-        targetWidgetId: pluginConfig.targetWidgetId || '',
-      };
-    }
-    if (isToolTimelineType) {
-      return {
-        title,
-        toolIdField: pluginConfig.toolIdField || '',
-        startTimeField: pluginConfig.startTimeField || '',
-        endTimeField: pluginConfig.endTimeField || '',
-        statusField: pluginConfig.statusField || '',
-        statusColors: pluginConfig.statusColors || [],
-        kpiFields: pluginConfig.kpiFields || [],
-        tooltip: pluginConfig.tooltip || { enabled: true },
-      };
-    }
     return {
-      xAxisField: pluginConfig.xAxisField || '',
-      yAxisFields: (pluginConfig.yAxisFields as string[]) || [],
+      title,
+      ...pluginConfig,
     };
   };
 
@@ -298,168 +219,50 @@ export function ChartConfigPanel({
         <div className="space-y-6 py-6">
           <ChartTypeSelector value={chartType} onChange={handleChartTypeChange} error={errors.chartType} />
 
-          {!isKpiCardType && !isKpiCardDynamicType && !isAiCommentType && (
+          {configBehavior?.showTitleInput && (
             <div className="space-y-2">
               <Label htmlFor="chart-title">標題</Label>
               <Input
                 id="chart-title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder={isEmbedType ? '嵌入報表' : '輸入標題...'}
+                placeholder={chartType === 'embed' ? '嵌入報表' : '輸入標題...'}
                 maxLength={50}
                 data-testid="chart-title-input"
               />
             </div>
           )}
 
-          {isEmbedType ? (
-            <>
-              {ConfigFields && (
-                <ConfigFields
-                  value={{ url: pluginConfig.url || '' }}
-                  onChange={handleFieldsChange}
-                  fields={[]}
-                  errors={{ url: errors.url }}
-                />
-              )}
-              <EmbedPreview url={(pluginConfig.url as string) || ''} title={title} />
-            </>
-          ) : isKpiCardType ? (
-            <>
-              {ConfigFields && (
-                <ConfigFields
-                  value={getConfigFieldsValue()}
-                  onChange={handleKpiConfigChange}
-                  fields={[]}
-                  errors={errors}
-                />
-              )}
+          {configBehavior?.requiresDataSource && (
+            <DataSourceSelector
+              dataSources={dataSources}
+              value={dataSourceId}
+              onChange={handleDataSourceChange}
+              error={errors.dataSourceId}
+            />
+          )}
 
-              <ChartPreview
-                chartType={chartType}
-                dataSource={undefined}
-                xAxisField=""
-                yAxisFields={[]}
-                title={title}
-                pluginConfig={pluginConfig}
-              />
-            </>
-          ) : isKpiCardDynamicType ? (
-            <>
-              <DataSourceSelector
-                dataSources={dataSources}
-                value={dataSourceId}
-                onChange={(id) => {
-                  setDataSourceId(id);
-                  setPluginConfig((prev) => ({ ...prev, valueField: '' }));
-                }}
-                error={errors.dataSourceId}
-              />
+          {ConfigFields && (configBehavior?.requiresDataSource ? selectedDataSource : true) && (
+            <ConfigFields
+              value={getConfigFieldsValue()}
+              onChange={handleKpiConfigChange}
+              fields={selectedDataSource?.fields || []}
+              errors={errors}
+              {...(isAiCommentType ? { availableWidgets: availableWidgetsForAiComment } : {})}
+            />
+          )}
 
-              {selectedDataSource && ConfigFields && (
-                <ConfigFields
-                  value={getConfigFieldsValue()}
-                  onChange={handleKpiConfigChange}
-                  fields={selectedDataSource.fields}
-                  errors={errors}
-                />
-              )}
-
-              <ChartPreview
-                chartType={chartType}
-                dataSource={selectedDataSource}
-                xAxisField=""
-                yAxisFields={[]}
-                title={title}
-                pluginConfig={pluginConfig}
-              />
-            </>
-          ) : isAiCommentType ? (
-            <>
-              {ConfigFields && (
-                <ConfigFields
-                  value={getConfigFieldsValue()}
-                  onChange={handleKpiConfigChange}
-                  fields={[]}
-                  errors={errors}
-                  availableWidgets={availableWidgetsForAiComment}
-                />
-              )}
-
-              <ChartPreview
-                chartType={chartType}
-                dataSource={undefined}
-                xAxisField=""
-                yAxisFields={[]}
-                title={title}
-                pluginConfig={pluginConfig}
-              />
-            </>
-          ) : isToolTimelineType ? (
-            <>
-              <DataSourceSelector
-                dataSources={dataSources}
-                value={dataSourceId}
-                onChange={(id) => {
-                  setDataSourceId(id);
-                  setPluginConfig((prev) => ({
-                    ...prev,
-                    toolIdField: '',
-                    startTimeField: '',
-                    endTimeField: '',
-                    statusField: '',
-                  }));
-                }}
-                error={errors.dataSourceId}
-              />
-
-              {selectedDataSource && ConfigFields && (
-                <ConfigFields
-                  value={getConfigFieldsValue()}
-                  onChange={handleKpiConfigChange}
-                  fields={selectedDataSource.fields}
-                  errors={errors}
-                />
-              )}
-
-              <ChartPreview
-                chartType={chartType}
-                dataSource={selectedDataSource}
-                xAxisField=""
-                yAxisFields={[]}
-                title={title}
-                pluginConfig={pluginConfig}
-              />
-            </>
+          {chartType === 'embed' ? (
+            <EmbedPreview url={(pluginConfig.url as string) || ''} title={title} />
           ) : (
-            <>
-              <DataSourceSelector
-                dataSources={dataSources}
-                value={dataSourceId}
-                onChange={handleDataSourceChange}
-                error={errors.dataSourceId}
-              />
-
-              {selectedDataSource && ConfigFields && (
-                <ConfigFields
-                  value={getConfigFieldsValue()}
-                  onChange={handleFieldsChange}
-                  fields={selectedDataSource.fields}
-                  errors={{
-                    xAxisField: errors.xAxisField,
-                    yAxisFields: errors.yAxisFields,
-                  }}
-                />
-              )}
-
-              <ChartPreview
-                chartType={chartType}
-                dataSource={selectedDataSource}
-                xAxisField={(pluginConfig.xAxisField as string) || ''}
-                yAxisFields={(pluginConfig.yAxisFields as string[]) || []}
-                title={title}
-              />
-            </>
+            <ChartPreview
+              chartType={chartType}
+              dataSource={selectedDataSource}
+              xAxisField={(pluginConfig.xAxisField as string) || ''}
+              yAxisFields={(pluginConfig.yAxisFields as string[]) || []}
+              title={title}
+              pluginConfig={pluginConfig}
+            />
           )}
         </div>
 

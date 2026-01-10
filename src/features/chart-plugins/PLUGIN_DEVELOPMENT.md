@@ -48,11 +48,29 @@ interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> {
   // 渲染
   Renderer: ComponentType<ChartRendererProps<TConfig>>;     // 圖表渲染元件
 
+  // UI 行為設定（必要）
+  configBehavior: PluginConfigBehavior;  // 控制設定面板的 UI 行為
+
   // 互動（可選）
   supportedInteractions?: ('click' | 'brush' | 'drilldown')[];
 
   // 多語系（可選）
   locales?: PluginLocales;         // 自包含式 i18n 資源
+}
+
+interface PluginConfigBehavior {
+  requiresDataSource: boolean;     // 是否需要資料源選擇器
+  showTitleInput: boolean;         // 是否顯示標題輸入框
+  previewHeight: 'sm' | 'md' | 'lg';  // 預覽區域高度 (h-40 / h-48 / h-64)
+  
+  // 當資料源變更時，回傳初始 pluginConfig
+  getInitialPluginConfig: () => Record<string, unknown>;
+  
+  // 判斷預覽是否可顯示
+  isPreviewReady: (params: {
+    pluginConfig: Record<string, unknown>;
+    dataSource?: DataSource;
+  }) => boolean;
 }
 
 interface BaseChartConfig {
@@ -179,12 +197,12 @@ export function PieChartConfigFields({
 }
 ```
 
-### 5. 建立 Plugin Export
+### 5. 建立 Plugin Export（含 configBehavior）
 
 ```typescript
 // src/features/chart-plugins/plugins/pie/index.ts
 import { PieChart } from 'lucide-react';
-import type { ChartPlugin } from '../../types';
+import type { ChartPlugin, DataSource } from '../../types';
 import { pieChartConfigSchema, type PieChartConfig } from './schema';
 import { PieChartRenderer } from './PieChartRenderer';
 import { PieChartConfigFields } from './ConfigFields';
@@ -197,8 +215,49 @@ export const PieChartPlugin: ChartPlugin<PieChartConfig> = {
   configSchema: pieChartConfigSchema,
   ConfigFields: PieChartConfigFields,
   Renderer: PieChartRenderer,
+  
+  // UI 行為設定（必要）
+  configBehavior: {
+    requiresDataSource: true,      // 需要資料源選擇器
+    showTitleInput: true,          // 顯示標題輸入框
+    previewHeight: 'md',           // 中等預覽高度 (h-48)
+    
+    getInitialPluginConfig: () => ({
+      labelField: '',
+      valueField: '',
+    }),
+    
+    isPreviewReady: ({ pluginConfig, dataSource }) => {
+      return !!(
+        dataSource &&
+        pluginConfig.labelField &&
+        pluginConfig.valueField
+      );
+    },
+  },
 };
 ```
+
+### configBehavior 設定說明
+
+| 屬性 | 類型 | 說明 |
+|------|------|------|
+| `requiresDataSource` | `boolean` | 是否需要顯示資料源選擇器。需要資料的圖表（如折線圖、圓餅圖）設為 `true`，靜態內容（如內嵌 Widget）設為 `false` |
+| `showTitleInput` | `boolean` | 是否顯示標題輸入框。KPI 卡片等不需標題的 Widget 設為 `false` |
+| `previewHeight` | `'sm' \| 'md' \| 'lg'` | 預覽區域高度。`sm`: 40px、`md`: 48px、`lg`: 64px |
+| `getInitialPluginConfig` | `() => Record<string, unknown>` | 當資料源變更時，回傳欄位的初始值。用於重設欄位選擇 |
+| `isPreviewReady` | `(params) => boolean` | 判斷預覽是否可顯示。通常在所有必要欄位都已設定時回傳 `true` |
+
+### 各類型 Plugin 的 configBehavior 參考
+
+| Plugin 類型 | requiresDataSource | showTitleInput | previewHeight |
+|-------------|-------------------|----------------|---------------|
+| line, bar, area, pie | `true` | `true` | `'md'` |
+| embed | `false` | `true` | `'md'` |
+| kpi-card | `false` | `false` | `'sm'` |
+| kpi-card-dynamic | `true` | `false` | `'sm'` |
+| ai-comment | `false` | `false` | `'sm'` |
+| tool-timeline | `true` | `true` | `'lg'` |
 
 ### 6. 註冊至 Registry
 

@@ -12,6 +12,19 @@ export const KpiCardPlugin: ChartPlugin<KpiCardConfig> = {
   configSchema: kpiCardConfigSchema,
   ConfigFields: KpiCardConfigFields,
   Renderer: KpiCardRenderer,
+  configBehavior: {
+    requiresDataSource: false,
+    showTitleInput: false,
+    previewHeight: 'sm',
+    getInitialPluginConfig: () => ({
+      value: undefined,
+      compareValue: undefined,
+      fontSize: 'md',
+      format: {},
+      conditionalColor: undefined,
+    }),
+    isPreviewReady: () => true,
+  },
 };
 
 export type { KpiCardConfig };

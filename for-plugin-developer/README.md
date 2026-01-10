@@ -32,12 +32,35 @@
 
 ```
 src/features/chart-plugins/plugins/<plugin-name>/
-├── index.ts              # Plugin 匯出（實作 ChartPlugin interface）
+├── index.ts              # Plugin 匯出（實作 ChartPlugin interface，含 configBehavior）
 ├── schema.ts             # Zod 驗證 schema
 ├── <Name>Renderer.tsx    # 主要渲染元件
 ├── ConfigFields.tsx      # 設定表單元件
 └── locales.ts            # （可選）多語系資源
 ```
+
+## configBehavior 設定
+
+每個 Plugin **必須** 定義 `configBehavior` 屬性，描述其在設定面板中的 UI 行為：
+
+| 屬性 | 類型 | 說明 |
+|------|------|------|
+| `requiresDataSource` | `boolean` | 是否顯示資料源選擇器 |
+| `showTitleInput` | `boolean` | 是否顯示標題輸入框 |
+| `previewHeight` | `'sm' \| 'md' \| 'lg'` | 預覽區域高度 |
+| `getInitialPluginConfig` | `() => Record<string, unknown>` | DataSource 變更時的初始值 |
+| `isPreviewReady` | `(params) => boolean` | 判斷預覽是否可顯示 |
+
+參考現有 Plugin 的設定：
+
+| Plugin 類型 | requiresDataSource | showTitleInput | previewHeight |
+|-------------|-------------------|----------------|---------------|
+| line, bar, area | `true` | `true` | `'md'` |
+| embed | `false` | `true` | `'md'` |
+| kpi-card | `false` | `false` | `'sm'` |
+| kpi-card-dynamic | `true` | `false` | `'sm'` |
+| ai-comment | `false` | `false` | `'sm'` |
+| tool-timeline | `true` | `true` | `'lg'` |
 
 ## 平台限制
 

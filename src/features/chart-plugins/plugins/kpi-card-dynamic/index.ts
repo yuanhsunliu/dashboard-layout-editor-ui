@@ -12,6 +12,19 @@ export const KpiCardDynamicPlugin: ChartPlugin<KpiCardDynamicConfig> = {
   configSchema: kpiCardDynamicConfigSchema,
   ConfigFields: KpiCardDynamicConfigFields,
   Renderer: KpiCardDynamicRenderer,
+  configBehavior: {
+    requiresDataSource: true,
+    showTitleInput: false,
+    previewHeight: 'sm',
+    getInitialPluginConfig: () => ({
+      valueField: '',
+      showTrend: false,
+      fontSize: 'md',
+      format: {},
+      conditionalColor: undefined,
+    }),
+    isPreviewReady: () => true,
+  },
 };
 
 export { kpiCardDynamicConfigSchema, type KpiCardDynamicConfig };

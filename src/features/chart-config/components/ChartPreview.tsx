@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { ChartRenderer } from '@/components/chart';
+import { chartRegistry } from '@/features/chart-plugins';
 import type { ChartConfig, ChartType } from '@/types/chart';
 import type { DataSource } from '../types';
 
@@ -12,31 +13,37 @@ interface ChartPreviewProps {
   pluginConfig?: Record<string, unknown>;
 }
 
+const PREVIEW_HEIGHT_MAP = {
+  sm: 'h-40',
+  md: 'h-48',
+  lg: 'h-64',
+} as const;
+
 export function ChartPreview({
   chartType,
   dataSource,
   xAxisField,
   yAxisFields,
   title,
-  pluginConfig,
+  pluginConfig = {},
 }: ChartPreviewProps) {
-  const isKpiCard = chartType === 'kpi-card';
-  const isKpiCardDynamic = chartType === 'kpi-card-dynamic';
-  const isAiComment = chartType === 'ai-comment';
-  const isToolTimeline = chartType === 'tool-timeline';
-  
-  const isComplete = isKpiCard 
-    ? true
-    : isKpiCardDynamic
-      ? true
-      : isAiComment
-        ? true
-        : isToolTimeline
-          ? dataSource && pluginConfig?.toolIdField && pluginConfig?.startTimeField && pluginConfig?.endTimeField && pluginConfig?.statusField
-          : dataSource && xAxisField && yAxisFields.length > 0;
+  const currentPlugin = useMemo(
+    () => chartRegistry.getByType(chartType),
+    [chartType]
+  );
+
+  const configBehavior = currentPlugin?.configBehavior;
+
+  const isComplete = useMemo(() => {
+    if (!configBehavior) return false;
+    return configBehavior.isPreviewReady({ pluginConfig, dataSource });
+  }, [configBehavior, pluginConfig, dataSource]);
+
+  const previewHeight = configBehavior?.previewHeight || 'md';
+  const heightClass = PREVIEW_HEIGHT_MAP[previewHeight];
 
   const previewConfig: ChartConfig | undefined = useMemo(() => {
-    if (isKpiCard) {
+    if (chartType === 'kpi-card') {
       const valueNum = pluginConfig?.value !== undefined ? Number(pluginConfig.value) : undefined;
       const compareNum = pluginConfig?.compareValue !== undefined ? Number(pluginConfig.compareValue) : undefined;
       return {
@@ -50,7 +57,7 @@ export function ChartPreview({
       } as ChartConfig;
     }
 
-    if (isKpiCardDynamic) {
+    if (chartType === 'kpi-card-dynamic') {
       return {
         chartType: 'kpi-card-dynamic',
         title: title || 'KPI',
@@ -63,7 +70,7 @@ export function ChartPreview({
       } as ChartConfig;
     }
 
-    if (isAiComment) {
+    if (chartType === 'ai-comment') {
       return {
         chartType: 'ai-comment',
         title: title || 'AI 洞察',
@@ -71,7 +78,7 @@ export function ChartPreview({
       } as ChartConfig;
     }
 
-    if (isToolTimeline && dataSource) {
+    if (chartType === 'tool-timeline' && dataSource) {
       return {
         chartType: 'tool-timeline',
         title: title || '機台時間軸',
@@ -97,16 +104,16 @@ export function ChartPreview({
     };
 
     return baseConfig as ChartConfig;
-  }, [chartType, dataSource, xAxisField, yAxisFields, title, isComplete, isKpiCard, isKpiCardDynamic, isAiComment, isToolTimeline, pluginConfig]);
+  }, [chartType, dataSource, xAxisField, yAxisFields, title, isComplete, pluginConfig]);
 
   const previewData = useMemo(() => {
-    if (isKpiCard || isAiComment) {
+    if (chartType === 'kpi-card' || chartType === 'ai-comment') {
       return undefined;
     }
-    if (isKpiCardDynamic && dataSource) {
+    if (chartType === 'kpi-card-dynamic' && dataSource) {
       return { rows: dataSource.demoData.rows };
     }
-    if (isToolTimeline && dataSource) {
+    if (chartType === 'tool-timeline' && dataSource) {
       return { rows: dataSource.demoData.rows };
     }
     if (!dataSource || !xAxisField || yAxisFields.length === 0) return undefined;
@@ -122,28 +129,14 @@ export function ChartPreview({
     });
 
     return { xAxis, series };
-  }, [dataSource, xAxisField, yAxisFields, isKpiCard, isKpiCardDynamic, isAiComment, isToolTimeline]);
+  }, [dataSource, xAxisField, yAxisFields, chartType]);
 
-  if (!isComplete && !isKpiCard && !isKpiCardDynamic && !isAiComment && !isToolTimeline) {
+  if (!isComplete) {
     return (
       <div className="space-y-2">
         <p className="text-sm font-medium">預覽</p>
         <div 
-          className="border rounded-md h-48 flex items-center justify-center text-muted-foreground"
-          data-testid="chart-preview-empty"
-        >
-          <p className="text-sm">請完成所有設定以預覽圖表</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isToolTimeline && !isComplete) {
-    return (
-      <div className="space-y-2">
-        <p className="text-sm font-medium">預覽</p>
-        <div 
-          className="border rounded-md h-48 flex items-center justify-center text-muted-foreground"
+          className={`border rounded-md ${heightClass} flex items-center justify-center text-muted-foreground`}
           data-testid="chart-preview-empty"
         >
           <p className="text-sm">請完成所有設定以預覽圖表</p>
@@ -156,7 +149,7 @@ export function ChartPreview({
     <div className="space-y-2">
       <p className="text-sm font-medium">預覽</p>
       <div 
-        className={`border rounded-md overflow-hidden ${isKpiCard || isKpiCardDynamic || isAiComment ? 'h-40' : isToolTimeline ? 'h-64' : 'h-48'}`}
+        className={`border rounded-md overflow-hidden ${heightClass}`}
         data-testid="chart-preview"
       >
         <ChartRenderer config={previewConfig!} previewData={previewData} />
