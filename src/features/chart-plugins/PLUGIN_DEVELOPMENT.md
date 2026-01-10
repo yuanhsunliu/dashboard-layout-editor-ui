@@ -21,12 +21,14 @@ src/features/chart-plugins/
     │   ├── index.ts
     │   ├── schema.ts
     │   ├── LineChartRenderer.tsx
-    │   └── ConfigFields.tsx
+    │   ├── ConfigFields.tsx
+    │   └── locales.ts          # （可選）多語系資源
     └── bar/                    # Bar Chart Plugin
         ├── index.ts
         ├── schema.ts
         ├── BarChartRenderer.tsx
-        └── ConfigFields.tsx
+        ├── ConfigFields.tsx
+        └── locales.ts          # （可選）多語系資源
 ```
 
 ## ChartPlugin Interface
@@ -45,12 +47,23 @@ interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> {
 
   // 渲染
   Renderer: ComponentType<ChartRendererProps<TConfig>>;     // 圖表渲染元件
+
+  // 互動（可選）
+  supportedInteractions?: ('click' | 'brush' | 'drilldown')[];
+
+  // 多語系（可選）
+  locales?: PluginLocales;         // 自包含式 i18n 資源
 }
 
 interface BaseChartConfig {
   chartType: string;
-  dataSourceId: string;
+  dataSourceId?: string;           // 可選，部分 Widget 不需資料源
 }
+
+type PluginLocales = {
+  'zh-TW': Record<string, string>;
+  'en': Record<string, string>;
+};
 ```
 
 ## 建立新 Plugin 步驟
@@ -221,6 +234,111 @@ export type ChartType = 'line' | 'bar' | 'pie';  // 新增 'pie'
 1. 重新 build 專案：`pnpm build`
 2. 執行 E2E 測試：`pnpm exec playwright test`
 3. 手動測試新圖表類型
+
+## 多語系 (i18n) 設計
+
+### 設計原則
+
+Plugin 採用**自包含式 i18n**，翻譯資源定義在 Plugin 內部，不需修改平台的 `src/locales/` 檔案。
+
+### 目錄結構
+
+```
+src/features/chart-plugins/plugins/my-widget/
+├── index.ts
+├── schema.ts
+├── MyWidgetRenderer.tsx
+├── ConfigFields.tsx
+└── locales.ts              # Plugin 專屬翻譯資源
+```
+
+### 定義翻譯資源
+
+```typescript
+// src/features/chart-plugins/plugins/my-widget/locales.ts
+import type { PluginLocales } from '../../types';
+
+export const myWidgetLocales: PluginLocales = {
+  'zh-TW': {
+    title: '標題',
+    analyze: '分析',
+    loading: '載入中...',
+    error: '發生錯誤',
+    retry: '重試',
+  },
+  'en': {
+    title: 'Title',
+    analyze: 'Analyze',
+    loading: 'Loading...',
+    error: 'An error occurred',
+    retry: 'Retry',
+  },
+};
+```
+
+### 匯出 Plugin 時包含 locales
+
+```typescript
+// src/features/chart-plugins/plugins/my-widget/index.ts
+import { LayoutGrid } from 'lucide-react';
+import type { ChartPlugin } from '../../types';
+import { myWidgetConfigSchema, type MyWidgetConfig } from './schema';
+import { MyWidgetRenderer } from './MyWidgetRenderer';
+import { MyWidgetConfigFields } from './ConfigFields';
+import { myWidgetLocales } from './locales';
+
+export const MyWidgetPlugin: ChartPlugin<MyWidgetConfig> = {
+  type: 'my-widget',
+  name: '我的 Widget',
+  description: '自訂 Widget 描述',
+  icon: LayoutGrid,
+  configSchema: myWidgetConfigSchema,
+  ConfigFields: MyWidgetConfigFields,
+  Renderer: MyWidgetRenderer,
+  locales: myWidgetLocales,  // 加入翻譯資源
+};
+```
+
+### 在元件中使用翻譯
+
+```typescript
+// src/features/chart-plugins/plugins/my-widget/MyWidgetRenderer.tsx
+import { useTranslation } from 'react-i18next';
+
+export function MyWidgetRenderer({ config }: ChartRendererProps<MyWidgetConfig>) {
+  // 使用 plugin type 作為 namespace
+  const { t } = useTranslation('my-widget');
+  
+  return (
+    <div className="w-full h-full" data-testid="my-widget">
+      <h3>{t('title')}</h3>
+      <button>{t('analyze')}</button>
+    </div>
+  );
+}
+```
+
+### 平台自動註冊機制
+
+平台在載入 Plugin 時會自動將 `locales` 註冊為 i18n namespace：
+
+```typescript
+// 平台 registry.ts 內部處理（開發者不需實作）
+plugins.forEach(plugin => {
+  if (plugin.locales) {
+    Object.entries(plugin.locales).forEach(([lang, resources]) => {
+      i18n.addResourceBundle(lang, plugin.type, resources, true, true);
+    });
+  }
+});
+```
+
+### 注意事項
+
+- **namespace 名稱**: 使用 `plugin.type` 作為 namespace（如 `'my-widget'`）
+- **翻譯 key**: 使用扁平結構，避免巢狀（如 `'title'` 而非 `'common.title'`）
+- **預設語系**: 繁體中文 (zh-TW)
+- **必須語系**: 必須同時提供 `zh-TW` 和 `en`
 
 ## 注意事項
 

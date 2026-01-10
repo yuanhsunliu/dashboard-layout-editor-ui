@@ -24,6 +24,15 @@ export interface ConfigFieldsProps<TConfig extends BaseChartConfig = BaseChartCo
   errors?: Record<string, string>;
 }
 
+/**
+ * Plugin 多語系資源定義
+ * 每個語系對應一組 key-value 翻譯
+ */
+export type PluginLocales = {
+  'zh-TW': Record<string, string>;
+  'en': Record<string, string>;
+};
+
 export interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> {
   type: string;
   name: string;
@@ -35,4 +44,10 @@ export interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Renderer: ComponentType<ChartRendererProps<any>>;
   supportedInteractions?: ('click' | 'brush' | 'drilldown')[];
+  /**
+   * Plugin 自包含的多語系資源
+   * 平台會在載入 Plugin 時自動註冊為獨立的 i18n namespace
+   * 使用方式: useTranslation(plugin.type)
+   */
+  locales?: PluginLocales;
 }
