@@ -42,6 +42,7 @@
 - [x] 新增 Embed Widget Plugin（嵌入外部報表）
 - [x] 新增 KPI Card Plugin（靜態數值輸入）
 - [ ] 新增 KPI Card Dynamic Plugin（從資料來源取值）
+- [x] 新增 Tool Timeline Plugin（機台狀態時間軸，含 OEE 指標與 Cross-Widget 互動）- 2026-01-10
 
 ## UI/UX Spec
 
@@ -120,11 +121,17 @@ src/features/chart-plugins/
     │   ├── schema.ts           # kpiCardConfigSchema
     │   ├── KpiCardRenderer.tsx
     │   └── ConfigFields.tsx
-    └── kpi-card-dynamic/
-        ├── index.ts            # KpiCardDynamicPlugin (資料來源)
-        ├── schema.ts           # kpiCardDynamicConfigSchema
-        ├── KpiCardDynamicRenderer.tsx
-        └── ConfigFields.tsx
+    ├── kpi-card-dynamic/
+    │   ├── index.ts            # KpiCardDynamicPlugin (資料來源)
+    │   ├── schema.ts           # kpiCardDynamicConfigSchema
+    │   ├── KpiCardDynamicRenderer.tsx
+    │   └── ConfigFields.tsx
+    └── tool-timeline/
+        ├── index.ts            # ToolTimelinePlugin (機台狀態時間軸)
+        ├── schema.ts           # toolTimelineConfigSchema
+        ├── ToolTimelineRenderer.tsx
+        ├── ConfigFields.tsx
+        └── locales.ts          # 多語系資源
 ```
 
 ## Dependencies

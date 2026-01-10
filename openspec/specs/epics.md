@@ -131,7 +131,7 @@ F03 (Chart Rendering) 搭配 **F09 (Chart Plugin System)** 採用漸進式設計
 | 階段 | 圖表類型 | 優先順序 |
 |------|----------|----------|
 | MVP | Line Chart, Bar Chart | P0 |
-| Phase 2 | Pie Chart, Area Chart, KPI Card | P1 |
+| Phase 2 | Pie Chart, Area Chart, KPI Card, Tool Timeline | P1 |
 | Phase 3 | KPI Card Dynamic, Scatter, Gauge, 其他 | P2 |
 
 透過 Plugin System 新增圖表類型：
@@ -150,7 +150,8 @@ MVP 完成後可按優先順序擴展：
 - 更多圖表類型 (Pie, Area) - 透過 Plugin 新增（Area 已完成）
 - ~~Cross-Widget Interaction (F11)~~ ✅ 已完成
 - ~~KPI Card Plugin~~ ✅ 已完成（靜態數值輸入）
-- KPI Card Dynamic Plugin ⬅️ 進行中（從資料來源取值）
+- KPI Card Dynamic Plugin ⬅️（從資料來源取值）
+- ~~Tool Timeline Plugin~~ ✅ 已完成 2026-01-10（機台狀態時間軸 + OEE 指標 + Cross-Widget 互動）
 - 主題系統 (F05)
 - 外部資料源整合 (F06)
 

@@ -46,6 +46,7 @@ export function ChartConfigPanel({
   const isKpiCardType = chartType === 'kpi-card';
   const isKpiCardDynamicType = chartType === 'kpi-card-dynamic';
   const isAiCommentType = chartType === 'ai-comment';
+  const isToolTimelineType = chartType === 'tool-timeline';
 
   const availableWidgetsForAiComment = useMemo(() => {
     return widgets
@@ -86,6 +87,18 @@ export function ChartConfigPanel({
           setDataSourceId('');
           setPluginConfig({
             targetWidgetId: initialConfig.targetWidgetId || '',
+          });
+        } else if (initialConfig.chartType === 'tool-timeline') {
+          setDataSourceId('dataSourceId' in initialConfig ? (initialConfig as { dataSourceId?: string }).dataSourceId || '' : '');
+          const config = initialConfig as unknown as Record<string, unknown>;
+          setPluginConfig({
+            toolIdField: config.toolIdField || '',
+            startTimeField: config.startTimeField || '',
+            endTimeField: config.endTimeField || '',
+            statusField: config.statusField || '',
+            statusColors: config.statusColors || [],
+            kpiFields: config.kpiFields || [],
+            tooltip: config.tooltip || { enabled: true },
           });
         } else {
           setDataSourceId('dataSourceId' in initialConfig ? initialConfig.dataSourceId : '');
@@ -173,6 +186,19 @@ export function ChartConfigPanel({
         title,
         targetWidgetId: pluginConfig.targetWidgetId || '',
       };
+    } else if (isToolTimelineType) {
+      formData = {
+        chartType,
+        title,
+        dataSourceId,
+        toolIdField: pluginConfig.toolIdField || '',
+        startTimeField: pluginConfig.startTimeField || '',
+        endTimeField: pluginConfig.endTimeField || '',
+        statusField: pluginConfig.statusField || '',
+        statusColors: pluginConfig.statusColors || [],
+        kpiFields: pluginConfig.kpiFields || [],
+        tooltip: pluginConfig.tooltip || { enabled: true },
+      };
     } else {
       formData = {
         chartType,
@@ -225,6 +251,18 @@ export function ChartConfigPanel({
       return {
         title,
         targetWidgetId: pluginConfig.targetWidgetId || '',
+      };
+    }
+    if (isToolTimelineType) {
+      return {
+        title,
+        toolIdField: pluginConfig.toolIdField || '',
+        startTimeField: pluginConfig.startTimeField || '',
+        endTimeField: pluginConfig.endTimeField || '',
+        statusField: pluginConfig.statusField || '',
+        statusColors: pluginConfig.statusColors || [],
+        kpiFields: pluginConfig.kpiFields || [],
+        tooltip: pluginConfig.tooltip || { enabled: true },
       };
     }
     return {
@@ -345,6 +383,42 @@ export function ChartConfigPanel({
               <ChartPreview
                 chartType={chartType}
                 dataSource={undefined}
+                xAxisField=""
+                yAxisFields={[]}
+                title={title}
+                pluginConfig={pluginConfig}
+              />
+            </>
+          ) : isToolTimelineType ? (
+            <>
+              <DataSourceSelector
+                dataSources={dataSources}
+                value={dataSourceId}
+                onChange={(id) => {
+                  setDataSourceId(id);
+                  setPluginConfig((prev) => ({
+                    ...prev,
+                    toolIdField: '',
+                    startTimeField: '',
+                    endTimeField: '',
+                    statusField: '',
+                  }));
+                }}
+                error={errors.dataSourceId}
+              />
+
+              {selectedDataSource && ConfigFields && (
+                <ConfigFields
+                  value={getConfigFieldsValue()}
+                  onChange={handleKpiConfigChange}
+                  fields={selectedDataSource.fields}
+                  errors={errors}
+                />
+              )}
+
+              <ChartPreview
+                chartType={chartType}
+                dataSource={selectedDataSource}
                 xAxisField=""
                 yAxisFields={[]}
                 title={title}

@@ -1,4 +1,4 @@
-export type ChartType = 'line' | 'bar' | 'area' | 'embed' | 'kpi-card' | 'kpi-card-dynamic' | 'ai-comment';
+export type ChartType = 'line' | 'bar' | 'area' | 'embed' | 'kpi-card' | 'kpi-card-dynamic' | 'ai-comment' | 'tool-timeline';
 
 export interface BaseChartConfig {
   chartType: ChartType;
@@ -58,4 +58,37 @@ export interface AiCommentConfig {
   targetWidgetId: string;
 }
 
-export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig | KpiCardConfig | KpiCardDynamicConfig | AiCommentConfig;
+export interface ToolTimelineStatusColor {
+  status: string;
+  color: string;
+  label: string;
+}
+
+export interface ToolTimelineKpiField {
+  field: string;
+  label: string;
+  format?: 'percent' | 'number';
+}
+
+export interface ToolTimelineConfig {
+  chartType: 'tool-timeline';
+  title?: string;
+  dataSourceId: string;
+  date?: string;
+  toolIdField: string;
+  startTimeField: string;
+  endTimeField: string;
+  statusField: string;
+  statusColors: ToolTimelineStatusColor[];
+  kpiFields?: ToolTimelineKpiField[];
+  tooltip?: {
+    enabled: boolean;
+    fields?: Array<{
+      field: string;
+      label: string;
+      format?: 'text' | 'time' | 'duration' | 'percent' | 'number';
+    }>;
+  };
+}
+
+export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig | KpiCardConfig | KpiCardDynamicConfig | AiCommentConfig | ToolTimelineConfig;

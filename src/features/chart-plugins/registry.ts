@@ -6,6 +6,7 @@ import { EmbedPlugin } from './plugins/embed';
 import { KpiCardPlugin } from './plugins/kpi-card';
 import { KpiCardDynamicPlugin } from './plugins/kpi-card-dynamic';
 import { AiCommentPlugin } from './plugins/ai-comment';
+import { ToolTimelinePlugin } from './plugins/tool-timeline';
 
 const plugins: ChartPlugin<BaseChartConfig>[] = [
   LineChartPlugin,
@@ -15,6 +16,7 @@ const plugins: ChartPlugin<BaseChartConfig>[] = [
   KpiCardPlugin,
   KpiCardDynamicPlugin,
   AiCommentPlugin,
+  ToolTimelinePlugin,
 ];
 
 export const chartRegistry = {

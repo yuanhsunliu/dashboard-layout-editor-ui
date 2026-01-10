@@ -22,6 +22,7 @@ export interface ConfigFieldsProps<TConfig extends BaseChartConfig = BaseChartCo
   onChange: (value: Partial<TConfig>) => void;
   fields?: DataSourceField[];
   errors?: Record<string, string>;
+  availableWidgets?: Array<{ id: string; title: string }>;
 }
 
 /**

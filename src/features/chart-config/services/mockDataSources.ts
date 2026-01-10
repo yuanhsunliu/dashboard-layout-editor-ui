@@ -58,6 +58,32 @@ export const mockDataSources: DataSource[] = [
       ],
     },
   },
+  {
+    id: 'tool-status-data',
+    name: '機台狀態資料',
+    fields: [
+      { name: 'toolId', type: 'string', label: '機台 ID' },
+      { name: 'startTime', type: 'string', label: '開始時間' },
+      { name: 'endTime', type: 'string', label: '結束時間' },
+      { name: 'status', type: 'string', label: '狀態' },
+      { name: 'availability', type: 'number', label: '可用率' },
+      { name: 'utilization', type: 'number', label: '稼動率' },
+    ],
+    demoData: {
+      rows: [
+        { toolId: 'XCG10001', startTime: '00:00', endTime: '06:00', status: 'running', availability: 85, utilization: 92 },
+        { toolId: 'XCG10001', startTime: '06:00', endTime: '08:00', status: 'idle', availability: 85, utilization: 92 },
+        { toolId: 'XCG10001', startTime: '08:00', endTime: '09:00', status: 'error', availability: 85, utilization: 92 },
+        { toolId: 'XCG10001', startTime: '09:00', endTime: '24:00', status: 'running', availability: 85, utilization: 92 },
+        { toolId: 'XCG10002', startTime: '00:00', endTime: '04:00', status: 'idle', availability: 78, utilization: 88 },
+        { toolId: 'XCG10002', startTime: '04:00', endTime: '20:00', status: 'running', availability: 78, utilization: 88 },
+        { toolId: 'XCG10002', startTime: '20:00', endTime: '24:00', status: 'idle', availability: 78, utilization: 88 },
+        { toolId: 'XCG10003', startTime: '00:00', endTime: '12:00', status: 'running', availability: 91, utilization: 95 },
+        { toolId: 'XCG10003', startTime: '12:00', endTime: '14:00', status: 'error', availability: 91, utilization: 95 },
+        { toolId: 'XCG10003', startTime: '14:00', endTime: '24:00', status: 'running', availability: 91, utilization: 95 },
+      ],
+    },
+  },
 ];
 
 export function getDataSources(): DataSource[] {

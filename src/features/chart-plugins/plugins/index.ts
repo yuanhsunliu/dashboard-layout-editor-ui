@@ -5,3 +5,4 @@ export { EmbedPlugin } from './embed';
 export { KpiCardPlugin } from './kpi-card';
 export { KpiCardDynamicPlugin } from './kpi-card-dynamic';
 export { AiCommentPlugin } from './ai-comment';
+export { ToolTimelinePlugin } from './tool-timeline';
