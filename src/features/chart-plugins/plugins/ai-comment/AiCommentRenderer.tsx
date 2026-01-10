@@ -93,8 +93,9 @@ export function AiCommentRenderer({
   return (
     <Card className="h-full flex flex-col" data-testid="ai-comment">
       <CardContent className="flex-1 flex flex-col p-4 overflow-hidden">
-        <div className="flex items-center gap-2 mb-4">
-          {state === 'idle' && (
+        {state === 'idle' && (
+          <div className="flex-1 flex flex-col items-center justify-center gap-2 text-muted-foreground">
+            <p>點擊下方按鈕開始 AI 洞察</p>
             <Button
               onClick={runAnalysis}
               size="sm"
@@ -102,30 +103,8 @@ export function AiCommentRenderer({
             >
               分析
             </Button>
-          )}
-          {state === 'success' && (
-            <Button
-              onClick={runAnalysis}
-              size="sm"
-              variant="outline"
-              data-testid="ai-reanalyze-button"
-            >
-              <RefreshCw className="h-4 w-4 mr-1" />
-              重新分析
-            </Button>
-          )}
-          {state === 'error' && (
-            <Button
-              onClick={runAnalysis}
-              size="sm"
-              variant="outline"
-              data-testid="ai-retry-button"
-            >
-              <RefreshCw className="h-4 w-4 mr-1" />
-              重試
-            </Button>
-          )}
-        </div>
+          </div>
+        )}
 
         {state === 'loading' && (
           <div
@@ -138,10 +117,21 @@ export function AiCommentRenderer({
         )}
 
         {state === 'error' && error && (
-          <Alert variant="destructive" data-testid="ai-error">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className="flex-1 flex flex-col items-center justify-center gap-3">
+            <Alert variant="destructive" data-testid="ai-error">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+            <Button
+              onClick={runAnalysis}
+              size="sm"
+              variant="outline"
+              data-testid="ai-retry-button"
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              重試
+            </Button>
+          </div>
         )}
 
         {state === 'success' && result && (
@@ -152,19 +142,25 @@ export function AiCommentRenderer({
             >
               <ReactMarkdown>{result.insight}</ReactMarkdown>
             </div>
-            <div
-              className="mt-4 pt-2 border-t text-xs text-muted-foreground"
-              data-testid="ai-analyzed-at"
-            >
-              上次分析: {new Date(result.analyzedAt).toLocaleString('zh-TW')}
+            <div className="flex items-center justify-between mt-2 pt-2 border-t">
+              <span
+                className="text-xs text-muted-foreground"
+                data-testid="ai-analyzed-at"
+              >
+                {new Date(result.analyzedAt).toLocaleString('zh-TW')}
+              </span>
+              <Button
+                onClick={runAnalysis}
+                size="sm"
+                variant="ghost"
+                className="h-6 px-2 text-xs"
+                data-testid="ai-reanalyze-button"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                重新分析
+              </Button>
             </div>
           </>
-        )}
-
-        {state === 'idle' && (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            點擊「分析」按鈕開始 AI 洞察
-          </div>
         )}
       </CardContent>
     </Card>
