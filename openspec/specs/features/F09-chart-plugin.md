@@ -44,6 +44,15 @@
 - [ ] 新增 KPI Card Dynamic Plugin（從資料來源取值）
 - [x] 新增 Tool Timeline Plugin（機台狀態時間軸，含 OEE 指標與 Cross-Widget 互動）- 2026-01-10
 
+### KPI Card 條件式顏色 ✅
+- [x] KPI Card 數值支援條件式顏色規則 - 2026-01-10
+- [x] 運算子：`>`, `>=`, `<`, `<=`, `==`
+- [x] 最多 5 條規則，按順序檢查
+- [x] HEX 色碼格式驗證
+- [x] 色碼輸入 UI（輸入框 + Color Picker）
+- [x] Demo 模式不套用條件式顏色
+- [x] 10 個 Playwright BDD 測試案例通過
+
 ## UI/UX Spec
 
 無額外 UI 變更，現有介面行為維持不變。

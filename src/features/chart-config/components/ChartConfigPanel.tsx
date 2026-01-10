@@ -74,6 +74,7 @@ export function ChartConfigPanel({
             compareValue: initialConfig.compareValue,
             fontSize: initialConfig.fontSize || 'md',
             format: initialConfig.format || {},
+            conditionalColor: initialConfig.conditionalColor,
           });
         } else if (initialConfig.chartType === 'kpi-card-dynamic') {
           setDataSourceId(initialConfig.dataSourceId || '');
@@ -82,6 +83,7 @@ export function ChartConfigPanel({
             showTrend: initialConfig.showTrend || false,
             fontSize: initialConfig.fontSize || 'md',
             format: initialConfig.format || {},
+            conditionalColor: initialConfig.conditionalColor,
           });
         } else if (initialConfig.chartType === 'ai-comment') {
           setDataSourceId('');
@@ -169,6 +171,7 @@ export function ChartConfigPanel({
         compareValue: compareNum,
         fontSize: pluginConfig.fontSize || 'md',
         format: pluginConfig.format || {},
+        conditionalColor: pluginConfig.conditionalColor,
       };
     } else if (isKpiCardDynamicType) {
       formData = {
@@ -179,6 +182,7 @@ export function ChartConfigPanel({
         showTrend: pluginConfig.showTrend || false,
         fontSize: pluginConfig.fontSize || 'md',
         format: pluginConfig.format || {},
+        conditionalColor: pluginConfig.conditionalColor,
       };
     } else if (isAiCommentType) {
       formData = {
@@ -236,6 +240,7 @@ export function ChartConfigPanel({
         compareValue: pluginConfig.compareValue,
         fontSize: pluginConfig.fontSize || 'md',
         format: pluginConfig.format || {},
+        conditionalColor: pluginConfig.conditionalColor,
       };
     }
     if (isKpiCardDynamicType) {
@@ -245,6 +250,7 @@ export function ChartConfigPanel({
         showTrend: pluginConfig.showTrend || false,
         fontSize: pluginConfig.fontSize || 'md',
         format: pluginConfig.format || {},
+        conditionalColor: pluginConfig.conditionalColor,
       };
     }
     if (isAiCommentType) {

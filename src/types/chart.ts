@@ -35,6 +35,18 @@ export interface KpiCardFormat {
   suffix?: string;
 }
 
+export interface ColorCondition {
+  operator: '>' | '>=' | '<' | '<=' | '==';
+  threshold: number;
+  color: string;
+}
+
+export interface ConditionalColor {
+  enabled: boolean;
+  rules: ColorCondition[];
+  defaultColor?: string;
+}
+
 export interface KpiCardConfig {
   chartType: 'kpi-card';
   title?: string;
@@ -42,6 +54,7 @@ export interface KpiCardConfig {
   compareValue?: number;
   fontSize?: 'sm' | 'md' | 'lg';
   format?: KpiCardFormat;
+  conditionalColor?: ConditionalColor;
 }
 
 export interface KpiCardDynamicConfig extends BaseChartConfig {
@@ -50,6 +63,7 @@ export interface KpiCardDynamicConfig extends BaseChartConfig {
   showTrend?: boolean;
   fontSize?: 'sm' | 'md' | 'lg';
   format?: KpiCardFormat;
+  conditionalColor?: ConditionalColor;
 }
 
 export interface AiCommentConfig {

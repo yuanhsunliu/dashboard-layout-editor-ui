@@ -46,6 +46,7 @@ export function ChartPreview({
         compareValue: compareNum,
         fontSize: (pluginConfig?.fontSize as 'sm' | 'md' | 'lg') || 'md',
         format: (pluginConfig?.format as Record<string, unknown>) || {},
+        conditionalColor: pluginConfig?.conditionalColor,
       } as ChartConfig;
     }
 
@@ -58,6 +59,7 @@ export function ChartPreview({
         showTrend: (pluginConfig?.showTrend as boolean) || false,
         fontSize: (pluginConfig?.fontSize as 'sm' | 'md' | 'lg') || 'md',
         format: (pluginConfig?.format as Record<string, unknown>) || {},
+        conditionalColor: pluginConfig?.conditionalColor,
       } as ChartConfig;
     }
 

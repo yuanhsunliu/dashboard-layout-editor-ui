@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { ChartRendererProps } from '../../types';
 import type { KpiCardDynamicConfig, KpiCardDynamicFormat } from './schema';
+import { evaluateColorCondition } from '../kpi-card/conditional-color';
 
 function formatValue(
   value: number,
@@ -64,6 +66,11 @@ export function KpiCardDynamicRenderer({
   const isDemo = !hasData || currentValue === undefined || isNaN(currentValue);
   const displayValue = isDemo ? 12345 : currentValue;
 
+  const conditionalTextColor = useMemo(() => {
+    if (isDemo) return undefined;
+    return evaluateColorCondition(displayValue, config.conditionalColor);
+  }, [displayValue, config.conditionalColor, isDemo]);
+
   const showTrendIndicator = config.showTrend && !isDemo && previousValue !== undefined && !isNaN(previousValue);
   const trendValue = showTrendIndicator ? calculateTrend(currentValue!, previousValue!) : null;
 
@@ -90,6 +97,7 @@ export function KpiCardDynamicRenderer({
       <CardContent className="flex flex-col items-center justify-center h-full p-6">
         <div
           className={`font-bold ${fontSizeClass} ${isDemo ? 'opacity-60' : ''}`}
+          style={conditionalTextColor ? { color: conditionalTextColor } : undefined}
           data-testid="kpi-dynamic-value"
         >
           {formatValue(displayValue, config.format)}

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { ChartRendererProps } from '../../types';
 import type { KpiCardConfig } from './schema';
+import { evaluateColorCondition } from './conditional-color';
 
 const DEMO_VALUE = 12345;
 const DEMO_COMPARE_VALUE = 11000;
@@ -98,6 +99,11 @@ export function KpiCardRenderer({
 
   const formattedValue = formatValue(value, format);
 
+  const conditionalTextColor = useMemo(() => {
+    if (isDemo) return undefined;
+    return evaluateColorCondition(value, config.conditionalColor);
+  }, [value, config.conditionalColor, isDemo]);
+
   const TrendIcon = trend === undefined
     ? null
     : trend > 0
@@ -123,6 +129,7 @@ export function KpiCardRenderer({
             'font-bold tabular-nums',
             isDemo && 'opacity-60'
           )}
+          style={conditionalTextColor ? { color: conditionalTextColor } : undefined}
           data-testid="kpi-value"
         >
           {formattedValue}

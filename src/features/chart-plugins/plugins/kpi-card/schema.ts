@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { conditionalColorSchema } from './conditional-color';
 
 export const kpiCardFormatSchema = z.object({
   thousandSeparator: z.boolean().optional(),
@@ -14,6 +15,7 @@ export const kpiCardConfigSchema = z.object({
   compareValue: z.number().optional(),
   fontSize: z.enum(['sm', 'md', 'lg']).optional().default('md'),
   format: kpiCardFormatSchema.optional(),
+  conditionalColor: conditionalColorSchema.optional(),
 });
 
 export type KpiCardFormat = z.infer<typeof kpiCardFormatSchema>;

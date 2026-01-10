@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { ConfigFieldsProps } from '../../types';
 import type { KpiCardConfig } from './schema';
+import { ConditionalColorConfig } from './ConditionalColorConfig';
+import type { ConditionalColor } from './conditional-color';
 
 const FONT_SIZE_OPTIONS = [
   { value: 'sm', label: '小' },
@@ -169,6 +171,13 @@ export function KpiCardConfigFields({
           />
         </div>
       </div>
+
+      <ConditionalColorConfig
+        value={value.conditionalColor}
+        onChange={(conditionalColor: ConditionalColor) =>
+          onChange({ ...value, conditionalColor })
+        }
+      />
     </div>
   );
 }
