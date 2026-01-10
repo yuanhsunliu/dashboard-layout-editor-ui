@@ -41,6 +41,7 @@ export function ChartConfigPanel({
   const isEmbedType = chartType === 'embed';
   const isKpiCardType = chartType === 'kpi-card';
   const isKpiCardDynamicType = chartType === 'kpi-card-dynamic';
+  const isAiCommentType = chartType === 'ai-comment';
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -66,6 +67,11 @@ export function ChartConfigPanel({
             showTrend: initialConfig.showTrend || false,
             fontSize: initialConfig.fontSize || 'md',
             format: initialConfig.format || {},
+          });
+        } else if (initialConfig.chartType === 'ai-comment') {
+          setDataSourceId('');
+          setPluginConfig({
+            targetWidgetId: initialConfig.targetWidgetId || '',
           });
         } else {
           setDataSourceId('dataSourceId' in initialConfig ? initialConfig.dataSourceId : '');
@@ -147,6 +153,12 @@ export function ChartConfigPanel({
         fontSize: pluginConfig.fontSize || 'md',
         format: pluginConfig.format || {},
       };
+    } else if (isAiCommentType) {
+      formData = {
+        chartType,
+        title,
+        targetWidgetId: pluginConfig.targetWidgetId || '',
+      };
     } else {
       formData = {
         chartType,
@@ -195,6 +207,12 @@ export function ChartConfigPanel({
         format: pluginConfig.format || {},
       };
     }
+    if (isAiCommentType) {
+      return {
+        title,
+        targetWidgetId: pluginConfig.targetWidgetId || '',
+      };
+    }
     return {
       xAxisField: pluginConfig.xAxisField || '',
       yAxisFields: (pluginConfig.yAxisFields as string[]) || [],
@@ -222,7 +240,7 @@ export function ChartConfigPanel({
         <div className="space-y-6 py-6">
           <ChartTypeSelector value={chartType} onChange={handleChartTypeChange} error={errors.chartType} />
 
-          {!isKpiCardType && !isKpiCardDynamicType && (
+          {!isKpiCardType && !isKpiCardDynamicType && !isAiCommentType && (
             <div className="space-y-2">
               <Label htmlFor="chart-title">標題</Label>
               <Input
@@ -292,6 +310,27 @@ export function ChartConfigPanel({
               <ChartPreview
                 chartType={chartType}
                 dataSource={selectedDataSource}
+                xAxisField=""
+                yAxisFields={[]}
+                title={title}
+                pluginConfig={pluginConfig}
+              />
+            </>
+          ) : isAiCommentType ? (
+            <>
+              {ConfigFields && (
+                <ConfigFields
+                  value={getConfigFieldsValue()}
+                  onChange={handleKpiConfigChange}
+                  fields={[]}
+                  errors={errors}
+                  availableWidgets={[]}
+                />
+              )}
+
+              <ChartPreview
+                chartType={chartType}
+                dataSource={undefined}
                 xAxisField=""
                 yAxisFields={[]}
                 title={title}

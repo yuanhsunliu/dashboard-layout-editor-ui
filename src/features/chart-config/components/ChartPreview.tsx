@@ -22,11 +22,14 @@ export function ChartPreview({
 }: ChartPreviewProps) {
   const isKpiCard = chartType === 'kpi-card';
   const isKpiCardDynamic = chartType === 'kpi-card-dynamic';
+  const isAiComment = chartType === 'ai-comment';
   const isComplete = isKpiCard 
     ? true
     : isKpiCardDynamic
       ? true
-      : dataSource && xAxisField && yAxisFields.length > 0;
+      : isAiComment
+        ? true
+        : dataSource && xAxisField && yAxisFields.length > 0;
 
   const previewConfig: ChartConfig | undefined = useMemo(() => {
     if (isKpiCard) {
@@ -54,6 +57,14 @@ export function ChartPreview({
       } as ChartConfig;
     }
 
+    if (isAiComment) {
+      return {
+        chartType: 'ai-comment',
+        title: title || 'AI 洞察',
+        targetWidgetId: (pluginConfig?.targetWidgetId as string) || '',
+      } as ChartConfig;
+    }
+
     if (!isComplete || !dataSource) return undefined;
 
     const baseConfig = {
@@ -65,10 +76,10 @@ export function ChartPreview({
     };
 
     return baseConfig as ChartConfig;
-  }, [chartType, dataSource, xAxisField, yAxisFields, title, isComplete, isKpiCard, isKpiCardDynamic, pluginConfig]);
+  }, [chartType, dataSource, xAxisField, yAxisFields, title, isComplete, isKpiCard, isKpiCardDynamic, isAiComment, pluginConfig]);
 
   const previewData = useMemo(() => {
-    if (isKpiCard) {
+    if (isKpiCard || isAiComment) {
       return undefined;
     }
     if (isKpiCardDynamic && dataSource) {
@@ -87,9 +98,9 @@ export function ChartPreview({
     });
 
     return { xAxis, series };
-  }, [dataSource, xAxisField, yAxisFields, isKpiCard, isKpiCardDynamic]);
+  }, [dataSource, xAxisField, yAxisFields, isKpiCard, isKpiCardDynamic, isAiComment]);
 
-  if (!isComplete && !isKpiCard && !isKpiCardDynamic) {
+  if (!isComplete && !isKpiCard && !isKpiCardDynamic && !isAiComment) {
     return (
       <div className="space-y-2">
         <p className="text-sm font-medium">預覽</p>
@@ -107,7 +118,7 @@ export function ChartPreview({
     <div className="space-y-2">
       <p className="text-sm font-medium">預覽</p>
       <div 
-        className={`border rounded-md overflow-hidden ${isKpiCard || isKpiCardDynamic ? 'h-40' : 'h-48'}`}
+        className={`border rounded-md overflow-hidden ${isKpiCard || isKpiCardDynamic || isAiComment ? 'h-40' : 'h-48'}`}
         data-testid="chart-preview"
       >
         <ChartRenderer config={previewConfig!} previewData={previewData} />

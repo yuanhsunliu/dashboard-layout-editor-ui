@@ -5,6 +5,7 @@ import { AreaChartPlugin } from './plugins/area';
 import { EmbedPlugin } from './plugins/embed';
 import { KpiCardPlugin } from './plugins/kpi-card';
 import { KpiCardDynamicPlugin } from './plugins/kpi-card-dynamic';
+import { AiCommentPlugin } from './plugins/ai-comment';
 
 const plugins: ChartPlugin<BaseChartConfig>[] = [
   LineChartPlugin,
@@ -13,6 +14,7 @@ const plugins: ChartPlugin<BaseChartConfig>[] = [
   EmbedPlugin,
   KpiCardPlugin,
   KpiCardDynamicPlugin,
+  AiCommentPlugin,
 ];
 
 export const chartRegistry = {

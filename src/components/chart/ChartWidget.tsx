@@ -19,6 +19,7 @@ export function ChartWidget({ chartConfig, widgetId, onConfigClick }: ChartWidge
     if (!chartConfig) return undefined;
     if (chartConfig.chartType === 'embed') return undefined;
     if (chartConfig.chartType === 'kpi-card') return undefined;
+    if (chartConfig.chartType === 'ai-comment') return undefined;
     
     const dataSource = getDataSourceById(chartConfig.dataSourceId);
     if (!dataSource) return undefined;

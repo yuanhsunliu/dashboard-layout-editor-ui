@@ -1,4 +1,4 @@
-export type ChartType = 'line' | 'bar' | 'area' | 'embed' | 'kpi-card' | 'kpi-card-dynamic';
+export type ChartType = 'line' | 'bar' | 'area' | 'embed' | 'kpi-card' | 'kpi-card-dynamic' | 'ai-comment';
 
 export interface BaseChartConfig {
   chartType: ChartType;
@@ -52,4 +52,10 @@ export interface KpiCardDynamicConfig extends BaseChartConfig {
   format?: KpiCardFormat;
 }
 
-export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig | KpiCardConfig | KpiCardDynamicConfig;
+export interface AiCommentConfig {
+  chartType: 'ai-comment';
+  title?: string;
+  targetWidgetId: string;
+}
+
+export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig | KpiCardConfig | KpiCardDynamicConfig | AiCommentConfig;

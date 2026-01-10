@@ -332,3 +332,55 @@ ChartConfigPanel SHALL 根據選擇的圖表類型，動態顯示對應的設定
 - **WHEN** Widget 呈現
 - **THEN** 應顯示淡色 Demo 數值 (12,345) 並在右下角顯示「示範資料」標籤
 
+### Requirement: AI Comment Widget Plugin
+
+The system SHALL provide an AI Comment Widget that captures a specified Widget's chart image and data, then generates insight analysis through an AI Agent.
+
+#### Scenario: 選擇 AI Comment 圖表類型
+- Given 使用者開啟 Widget 設定面板
+- When 使用者點擊圖表類型下拉選單
+- Then 應顯示「AI 洞察」選項
+
+#### Scenario: 選擇目標 Widget
+- Given 使用者選擇 AI Comment 類型
+- When 設定面板顯示
+- Then 應顯示目標 Widget 下拉選單
+- And 下拉選單列出同 Dashboard 的其他 Widget
+- And 排除自己和其他 AI Comment Widget
+
+#### Scenario: 觸發 AI 分析
+- Given AI Comment Widget 已設定目標 Widget
+- When 使用者點擊「分析」按鈕
+- Then 應顯示 Loading 狀態
+- And 擷取目標 Widget 截圖與資料
+- And 呼叫 AI Agent API
+
+#### Scenario: 顯示洞察結果
+- Given AI 分析完成
+- When 收到 AI 回應
+- Then 應以 Markdown 格式顯示洞察結果
+- And 顯示上次分析時間
+- And 顯示「重新分析」按鈕
+
+#### Scenario: 資料變更自動重新分析
+- Given AI Comment 已有分析結果
+- When 目標 Widget 的資料來源更新
+- Then 應自動重新觸發 AI 分析
+- And 更新洞察結果
+
+#### Scenario: 未設定目標 Widget
+- Given AI Comment Widget 尚未選擇目標 Widget
+- When Widget 載入顯示
+- Then 應顯示提示文字「請選擇要分析的 Widget」
+
+#### Scenario: 目標 Widget 被刪除
+- Given AI Comment Widget 已設定目標 Widget
+- When 目標 Widget 被使用者刪除
+- Then 應顯示錯誤訊息「目標 Widget 已不存在」
+
+#### Scenario: AI 分析失敗
+- Given 使用者點擊分析按鈕
+- When AI API 回傳錯誤或逾時
+- Then 應顯示錯誤訊息
+- And 顯示重試按鈕
+
