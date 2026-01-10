@@ -143,6 +143,8 @@ export function DashboardEditorPage() {
         onClose={handleCloseConfigPanel}
         onSave={handleSaveConfig}
         initialConfig={configWidgetData?.chartConfig}
+        widgets={dashboard?.widgets}
+        currentWidgetId={configWidgetId ?? undefined}
       />
     </div>
   );

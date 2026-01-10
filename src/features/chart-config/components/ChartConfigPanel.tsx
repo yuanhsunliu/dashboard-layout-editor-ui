@@ -22,6 +22,8 @@ interface ChartConfigPanelProps {
   onClose: () => void;
   onSave: (config: ChartConfig) => void;
   initialConfig?: ChartConfig;
+  widgets?: Array<{ id: string; chartConfig?: ChartConfig }>;
+  currentWidgetId?: string;
 }
 
 export function ChartConfigPanel({
@@ -29,6 +31,8 @@ export function ChartConfigPanel({
   onClose,
   onSave,
   initialConfig,
+  widgets = [],
+  currentWidgetId,
 }: ChartConfigPanelProps) {
   const dataSources = useMemo(() => getDataSources(), []);
 
@@ -42,6 +46,16 @@ export function ChartConfigPanel({
   const isKpiCardType = chartType === 'kpi-card';
   const isKpiCardDynamicType = chartType === 'kpi-card-dynamic';
   const isAiCommentType = chartType === 'ai-comment';
+
+  const availableWidgetsForAiComment = useMemo(() => {
+    return widgets
+      .filter((w) => w.id !== currentWidgetId && w.chartConfig?.chartType !== 'ai-comment')
+      .map((w) => ({
+        id: w.id,
+        title: w.chartConfig?.title || '',
+        chartType: w.chartConfig?.chartType || '',
+      }));
+  }, [widgets, currentWidgetId]);
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -324,7 +338,7 @@ export function ChartConfigPanel({
                   onChange={handleKpiConfigChange}
                   fields={[]}
                   errors={errors}
-                  availableWidgets={[]}
+                  availableWidgets={availableWidgetsForAiComment}
                 />
               )}
 
