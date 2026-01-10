@@ -158,6 +158,8 @@ test.describe('Dashboard Management', () => {
 - **Chart Config**: 圖表設定，包含資料源、圖表類型、軸線對應
 - **Data Source**: 資料來源，提供圖表所需的數據
 - **Theme**: 視覺主題，影響整個 Dashboard 的配色
+- **Dashboard Filter**: 跨 Widget 的篩選狀態，用於連動互動
+- **Cross-Widget Interaction**: Widget 間的資料連動機制，依據共用欄位自動連動
 
 ### Widget 類型
 Widget 類型透過 **Chart Plugin System** 擴展，開發人員可按照規範實作新的插件：

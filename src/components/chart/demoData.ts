@@ -1,9 +1,17 @@
+import type { DemoDataRow } from '@/features/chart-config/types';
+
 export interface DemoDataSeries {
   name: string;
   data: number[];
 }
 
 export interface DemoData {
+  xAxis?: string[];
+  series?: DemoDataSeries[];
+  rows?: DemoDataRow[];
+}
+
+export interface ChartDemoData {
   xAxis: string[];
   series: DemoDataSeries[];
 }

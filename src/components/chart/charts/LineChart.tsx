@@ -41,15 +41,17 @@ export function LineChart({ title, smooth = false, showArea = false, data }: Lin
 
   const option: EChartsOption = useMemo(() => {
     const chartData = data || DEMO_DATA.line;
+    const xAxisData = chartData.xAxis || [];
+    const seriesData = chartData.series || [];
     return {
       title: title ? { text: title, left: 'center', top: 10 } : undefined,
       tooltip: { trigger: 'axis' },
       xAxis: {
         type: 'category',
-        data: chartData.xAxis,
+        data: xAxisData,
       },
       yAxis: { type: 'value' },
-      series: chartData.series.map((s) => ({
+      series: seriesData.map((s) => ({
         name: s.name,
         type: 'line' as const,
         data: s.data,

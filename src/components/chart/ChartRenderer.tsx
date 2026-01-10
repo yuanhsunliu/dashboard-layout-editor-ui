@@ -1,14 +1,24 @@
 import type { ChartConfig } from '@/types/chart';
 import type { DemoData } from './demoData';
+import type { DashboardFilter, ChartInteractionEvent } from '@/types/filter';
 import { chartRegistry, ChartErrorBoundary } from '@/features/chart-plugins';
 import { AlertTriangle } from 'lucide-react';
 
 interface ChartRendererProps {
   config: ChartConfig;
   previewData?: DemoData;
+  filters?: DashboardFilter[];
+  widgetId?: string;
+  onInteraction?: (event: ChartInteractionEvent) => void;
 }
 
-export function ChartRenderer({ config, previewData }: ChartRendererProps) {
+export function ChartRenderer({ 
+  config, 
+  previewData,
+  filters,
+  widgetId,
+  onInteraction,
+}: ChartRendererProps) {
   const plugin = chartRegistry.getByType(config.chartType);
 
   if (!plugin) {
@@ -27,7 +37,13 @@ export function ChartRenderer({ config, previewData }: ChartRendererProps) {
 
   return (
     <ChartErrorBoundary>
-      <Renderer config={config} data={previewData} />
+      <Renderer 
+        config={config} 
+        data={previewData} 
+        filters={filters}
+        widgetId={widgetId}
+        onInteraction={onInteraction}
+      />
     </ChartErrorBoundary>
   );
 }

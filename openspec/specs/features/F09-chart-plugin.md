@@ -39,6 +39,9 @@
 
 ### 額外完成
 - [x] 新增 Area Chart Plugin（驗證 Plugin 架構可擴展性）
+- [x] 新增 Embed Widget Plugin（嵌入外部報表）
+- [x] 新增 KPI Card Plugin（靜態數值輸入）
+- [ ] 新增 KPI Card Dynamic Plugin（從資料來源取值）
 
 ## UI/UX Spec
 
@@ -102,10 +105,25 @@ src/features/chart-plugins/
     │   ├── schema.ts           # barChartConfigSchema
     │   ├── BarChartRenderer.tsx
     │   └── ConfigFields.tsx
-    └── area/
-        ├── index.ts            # AreaChartPlugin
-        ├── schema.ts           # areaChartConfigSchema
-        ├── AreaChartRenderer.tsx
+    ├── area/
+    │   ├── index.ts            # AreaChartPlugin
+    │   ├── schema.ts           # areaChartConfigSchema
+    │   ├── AreaChartRenderer.tsx
+    │   └── ConfigFields.tsx
+    ├── embed/
+    │   ├── index.ts            # EmbedPlugin
+    │   ├── schema.ts           # embedConfigSchema
+    │   ├── EmbedRenderer.tsx
+    │   └── ConfigFields.tsx
+    ├── kpi-card/
+    │   ├── index.ts            # KpiCardPlugin (靜態數值)
+    │   ├── schema.ts           # kpiCardConfigSchema
+    │   ├── KpiCardRenderer.tsx
+    │   └── ConfigFields.tsx
+    └── kpi-card-dynamic/
+        ├── index.ts            # KpiCardDynamicPlugin (資料來源)
+        ├── schema.ts           # kpiCardDynamicConfigSchema
+        ├── KpiCardDynamicRenderer.tsx
         └── ConfigFields.tsx
 ```
 

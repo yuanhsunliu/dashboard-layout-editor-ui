@@ -2,6 +2,7 @@ import type { z } from 'zod';
 import type { ComponentType } from 'react';
 import type { DemoData } from '@/components/chart/demoData';
 import type { DataSourceField } from '@/features/chart-config/types';
+import type { DashboardFilter, ChartInteractionEvent } from '@/types/filter';
 
 export interface BaseChartConfig {
   chartType: string;
@@ -11,6 +12,9 @@ export interface BaseChartConfig {
 export interface ChartRendererProps<TConfig extends BaseChartConfig = BaseChartConfig> {
   config: TConfig;
   data?: DemoData;
+  filters?: DashboardFilter[];
+  widgetId?: string;
+  onInteraction?: (event: ChartInteractionEvent) => void;
 }
 
 export interface ConfigFieldsProps<TConfig extends BaseChartConfig = BaseChartConfig> {
@@ -30,4 +34,5 @@ export interface ChartPlugin<TConfig extends BaseChartConfig = BaseChartConfig> 
   ConfigFields: ComponentType<ConfigFieldsProps<any>>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Renderer: ComponentType<ChartRendererProps<any>>;
+  supportedInteractions?: ('click' | 'brush' | 'drilldown')[];
 }

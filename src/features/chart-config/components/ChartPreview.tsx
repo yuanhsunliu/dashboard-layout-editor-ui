@@ -9,6 +9,7 @@ interface ChartPreviewProps {
   xAxisField: string;
   yAxisFields: string[];
   title?: string;
+  pluginConfig?: Record<string, unknown>;
 }
 
 export function ChartPreview({
@@ -17,10 +18,42 @@ export function ChartPreview({
   xAxisField,
   yAxisFields,
   title,
+  pluginConfig,
 }: ChartPreviewProps) {
-  const isComplete = dataSource && xAxisField && yAxisFields.length > 0;
+  const isKpiCard = chartType === 'kpi-card';
+  const isKpiCardDynamic = chartType === 'kpi-card-dynamic';
+  const isComplete = isKpiCard 
+    ? true
+    : isKpiCardDynamic
+      ? true
+      : dataSource && xAxisField && yAxisFields.length > 0;
 
   const previewConfig: ChartConfig | undefined = useMemo(() => {
+    if (isKpiCard) {
+      const valueNum = pluginConfig?.value !== undefined ? Number(pluginConfig.value) : undefined;
+      const compareNum = pluginConfig?.compareValue !== undefined ? Number(pluginConfig.compareValue) : undefined;
+      return {
+        chartType: 'kpi-card',
+        title: title || 'KPI',
+        value: valueNum as number,
+        compareValue: compareNum,
+        fontSize: (pluginConfig?.fontSize as 'sm' | 'md' | 'lg') || 'md',
+        format: (pluginConfig?.format as Record<string, unknown>) || {},
+      } as ChartConfig;
+    }
+
+    if (isKpiCardDynamic) {
+      return {
+        chartType: 'kpi-card-dynamic',
+        title: title || 'KPI',
+        dataSourceId: dataSource?.id || '',
+        valueField: (pluginConfig?.valueField as string) || '',
+        showTrend: (pluginConfig?.showTrend as boolean) || false,
+        fontSize: (pluginConfig?.fontSize as 'sm' | 'md' | 'lg') || 'md',
+        format: (pluginConfig?.format as Record<string, unknown>) || {},
+      } as ChartConfig;
+    }
+
     if (!isComplete || !dataSource) return undefined;
 
     const baseConfig = {
@@ -32,9 +65,15 @@ export function ChartPreview({
     };
 
     return baseConfig as ChartConfig;
-  }, [chartType, dataSource, xAxisField, yAxisFields, title, isComplete]);
+  }, [chartType, dataSource, xAxisField, yAxisFields, title, isComplete, isKpiCard, isKpiCardDynamic, pluginConfig]);
 
   const previewData = useMemo(() => {
+    if (isKpiCard) {
+      return undefined;
+    }
+    if (isKpiCardDynamic && dataSource) {
+      return { rows: dataSource.demoData.rows };
+    }
     if (!dataSource || !xAxisField || yAxisFields.length === 0) return undefined;
 
     const { rows } = dataSource.demoData;
@@ -48,9 +87,9 @@ export function ChartPreview({
     });
 
     return { xAxis, series };
-  }, [dataSource, xAxisField, yAxisFields]);
+  }, [dataSource, xAxisField, yAxisFields, isKpiCard, isKpiCardDynamic]);
 
-  if (!isComplete) {
+  if (!isComplete && !isKpiCard && !isKpiCardDynamic) {
     return (
       <div className="space-y-2">
         <p className="text-sm font-medium">預覽</p>
@@ -68,7 +107,7 @@ export function ChartPreview({
     <div className="space-y-2">
       <p className="text-sm font-medium">預覽</p>
       <div 
-        className="border rounded-md h-48 overflow-hidden"
+        className={`border rounded-md overflow-hidden ${isKpiCard || isKpiCardDynamic ? 'h-40' : 'h-48'}`}
         data-testid="chart-preview"
       >
         <ChartRenderer config={previewConfig!} previewData={previewData} />

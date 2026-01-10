@@ -6,8 +6,10 @@ import { Toaster, toast } from 'sonner';
 import { InlineEditName } from '@/features/dashboard/components';
 import { DashboardGrid } from '@/features/widget/components';
 import { ChartConfigPanel } from '@/features/chart-config';
+import { DashboardFilterBar } from '@/components/dashboard';
 import { updateDashboard } from '@/services/dashboardApi';
 import { useDashboardEditorStore } from '@/stores/useDashboardEditorStore';
+import { useDashboardFilterStore } from '@/stores/useDashboardFilterStore';
 import type { ChartConfig } from '@/types/chart';
 
 export function DashboardEditorPage() {
@@ -21,12 +23,15 @@ export function DashboardEditorPage() {
 
   const { dashboard, isSaving, saveError, initDashboard, addWidget, removeWidget, updateWidgetConfig, updateLayout } =
     useDashboardEditorStore();
+  
+  const clearAllFilters = useDashboardFilterStore(state => state.clearAllFilters);
 
   useEffect(() => {
     if (id) {
       initDashboard(id);
+      clearAllFilters();
     }
-  }, [id, initDashboard]);
+  }, [id, initDashboard, clearAllFilters]);
 
   useEffect(() => {
     if (saveError) {
@@ -122,6 +127,7 @@ export function DashboardEditorPage() {
           )}
         </div>
       </header>
+      <DashboardFilterBar />
       <main className="flex-1 container mx-auto px-4 py-8" ref={containerRef}>
         <DashboardGrid
           dashboard={dashboard}

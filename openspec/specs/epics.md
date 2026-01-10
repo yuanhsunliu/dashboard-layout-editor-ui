@@ -17,7 +17,8 @@ openspec/specs/
 │   ├── F07-persistence.md
 │   ├── F08-i18n.md
 │   ├── F09-chart-plugin.md
-│   └── F10-embed-widget.md
+│   ├── F10-embed-widget.md
+│   └── F11-cross-widget-interaction.md
 └── technical/                  # 技術規格（非功能需求）
     └── T01-project-setup.md
 ```
@@ -38,6 +39,7 @@ openspec/specs/
 | **F08** | i18n | 多語系支援 (zh-TW / en) | P2 | 待開發 |
 | **F09** | Chart Plugin System | 圖表插件架構，支援擴展新圖表類型 | P1 | ✅ 完成 |
 | **F10** | Embed Widget | 嵌入外部報表 URL 至 Dashboard | P1 | ✅ 完成 |
+| **F11** | Cross-Widget Interaction | Widget 間資料連動，欄位驅動自動連動 | P1 | ✅ 完成 |
 
 ## Technical Spec 總覽
 
@@ -50,9 +52,9 @@ openspec/specs/
 ## 開發順序
 
 ```
-T01 → F01 → F02 → F03 → F04 → F07 → F09 → F10 → F06 → F05 → F08
-      └─────────────┬─────────────┘      └──┬──┘
-               MVP 核心功能              已完成
+T01 → F01 → F02 → F03 → F04 → F07 → F09 → F10 → F11 → F06 → F05 → F08
+      └─────────────┬─────────────┘      └──┬──┘   │
+               MVP 核心功能              已完成    下一個
 ```
 
 ### 順序說明
@@ -61,9 +63,10 @@ T01 → F01 → F02 → F03 → F04 → F07 → F09 → F10 → F06 → F05 → 
 3. **F07**: 儲存功能讓 MVP 完整可用 ✅
 4. **F09**: Chart Plugin 架構重構，為擴展圖表類型鋪路 ✅
 5. **F10**: Embed Widget，嵌入外部報表（基於 Plugin 架構）✅
-6. **F06**: 資料源整合（可先用 Mock 資料）
-7. **F05**: 主題系統（錦上添花）
-8. **F08**: 多語系（最後處理）
+6. **F11**: Cross-Widget Interaction，Widget 間資料連動 ✅
+7. **F06**: 資料源整合（可先用 Mock 資料）
+8. **F05**: 主題系統（錦上添花）
+9. **F08**: 多語系（最後處理）
 
 ---
 
@@ -128,8 +131,8 @@ F03 (Chart Rendering) 搭配 **F09 (Chart Plugin System)** 採用漸進式設計
 | 階段 | 圖表類型 | 優先順序 |
 |------|----------|----------|
 | MVP | Line Chart, Bar Chart | P0 |
-| Phase 2 | Pie Chart, Area Chart | P1 |
-| Phase 3 | Scatter, Gauge, 其他 | P2 |
+| Phase 2 | Pie Chart, Area Chart, KPI Card | P1 |
+| Phase 3 | KPI Card Dynamic, Scatter, Gauge, 其他 | P2 |
 
 透過 Plugin System 新增圖表類型：
 1. 實作 `ChartPlugin` Interface
@@ -145,12 +148,16 @@ MVP 完成後可按優先順序擴展：
 ### Phase 2 (P1)
 - ~~Chart Plugin System (F09)~~ ✅ 已完成
 - 更多圖表類型 (Pie, Area) - 透過 Plugin 新增（Area 已完成）
+- ~~Cross-Widget Interaction (F11)~~ ✅ 已完成
+- ~~KPI Card Plugin~~ ✅ 已完成（靜態數值輸入）
+- KPI Card Dynamic Plugin ⬅️ 進行中（從資料來源取值）
 - 主題系統 (F05)
 - 外部資料源整合 (F06)
 
 ### Phase 3 (P2)
 - 多語系 (F08)
 - 進階圖表類型
+- 框選 (Brush) 互動 - F11 Phase 2
 - Dashboard 複製
 - Widget 複製
 - 匯出 Dashboard 為 JSON

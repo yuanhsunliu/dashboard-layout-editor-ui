@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { WidgetContainer, WidgetEmptyState } from '@/features/widget/components';
 import { ChartWidget } from '@/components/chart';
 import type { Dashboard, LayoutItem } from '@/types/dashboard';
+import { useDashboardFilterStore, getConfigFields } from '@/stores/useDashboardFilterStore';
 import 'react-grid-layout/css/styles.css';
 
 const GRID_CONFIG = {
@@ -33,6 +34,8 @@ export function DashboardGrid({
   onLayoutChange,
   containerWidth,
 }: DashboardGridProps) {
+  const filters = useDashboardFilterStore(state => state.filters);
+  
   const widgetMap = useMemo(() => {
     return new Map(dashboard.widgets.map(w => [w.id, w]));
   }, [dashboard.widgets]);
@@ -55,13 +58,20 @@ export function DashboardGrid({
     onLayoutChange(layoutItems);
   };
 
+  const getWidgetFilters = (widgetId: string) => {
+    const widget = widgetMap.get(widgetId);
+    if (!widget?.chartConfig) return [];
+    const fields = getConfigFields(widget.chartConfig);
+    return filters.filter(f => fields.includes(f.field));
+  };
+
   if (dashboard.widgets.length === 0) {
     return <WidgetEmptyState onAddWidget={onAddWidget} />;
   }
 
   return (
-    <div className="relative" data-testid="dashboard-grid">
-      <div className="absolute top-0 right-0 z-10 p-2">
+    <div data-testid="dashboard-grid">
+      <div className="flex justify-end p-2">
         <Button onClick={() => onAddWidget()} size="sm" data-testid="add-widget-button">
           <Plus className="h-4 w-4 mr-2" />
           新增 Widget
@@ -86,15 +96,19 @@ export function DashboardGrid({
           const widget = widgetMap.get(item.i);
           if (!widget) return null;
 
+          const widgetFilters = getWidgetFilters(item.i);
+
           return (
             <div key={item.i} data-testid={`widget-${item.i}`}>
               <WidgetContainer
                 widget={widget}
                 onDelete={() => onRemoveWidget(item.i)}
                 onConfig={() => onConfigWidget(item.i)}
+                filters={widgetFilters}
               >
                 <ChartWidget 
-                  chartConfig={widget.chartConfig} 
+                  chartConfig={widget.chartConfig}
+                  widgetId={widget.id}
                   onConfigClick={() => onConfigWidget(item.i)}
                 />
               </WidgetContainer>

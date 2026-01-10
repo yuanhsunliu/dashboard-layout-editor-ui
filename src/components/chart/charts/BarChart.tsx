@@ -41,7 +41,9 @@ export function BarChart({ title, stacked = false, horizontal = false, data }: B
 
   const option: EChartsOption = useMemo(() => {
     const chartData = data || DEMO_DATA.bar;
-    const categoryAxis = { type: 'category' as const, data: chartData.xAxis };
+    const xAxisData = chartData.xAxis || [];
+    const seriesData = chartData.series || [];
+    const categoryAxis = { type: 'category' as const, data: xAxisData };
     const valueAxis = { type: 'value' as const };
 
     return {
@@ -49,7 +51,7 @@ export function BarChart({ title, stacked = false, horizontal = false, data }: B
       tooltip: { trigger: 'axis' },
       xAxis: horizontal ? valueAxis : categoryAxis,
       yAxis: horizontal ? categoryAxis : valueAxis,
-      series: chartData.series.map((s) => ({
+      series: seriesData.map((s) => ({
         name: s.name,
         type: 'bar' as const,
         data: s.data,

@@ -3,12 +3,16 @@ import { LineChartPlugin } from './plugins/line';
 import { BarChartPlugin } from './plugins/bar';
 import { AreaChartPlugin } from './plugins/area';
 import { EmbedPlugin } from './plugins/embed';
+import { KpiCardPlugin } from './plugins/kpi-card';
+import { KpiCardDynamicPlugin } from './plugins/kpi-card-dynamic';
 
 const plugins: ChartPlugin<BaseChartConfig>[] = [
   LineChartPlugin,
   BarChartPlugin,
   AreaChartPlugin,
   EmbedPlugin,
+  KpiCardPlugin,
+  KpiCardDynamicPlugin,
 ];
 
 export const chartRegistry = {

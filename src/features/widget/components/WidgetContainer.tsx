@@ -1,15 +1,18 @@
 import { X, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { WidgetFilterBadge } from '@/components/dashboard';
 import type { Widget } from '@/types/dashboard';
+import type { DashboardFilter } from '@/types/filter';
 
 interface WidgetContainerProps {
   widget: Widget;
   onDelete: () => void;
   onConfig: () => void;
+  filters?: DashboardFilter[];
   children?: React.ReactNode;
 }
 
-export function WidgetContainer({ widget, onDelete, onConfig, children }: WidgetContainerProps) {
+export function WidgetContainer({ widget, onDelete, onConfig, filters = [], children }: WidgetContainerProps) {
   const getTitle = () => {
     if (!widget.chartConfig) return '未設定';
     if (widget.chartConfig.title) return widget.chartConfig.title;
@@ -20,7 +23,7 @@ export function WidgetContainer({ widget, onDelete, onConfig, children }: Widget
   const title = getTitle();
 
   return (
-    <div className="flex flex-col h-full bg-card border rounded-lg shadow-sm overflow-hidden">
+    <div className="relative flex flex-col h-full bg-card border rounded-lg shadow-sm overflow-hidden">
       <div
         className="flex items-center justify-between px-3 py-2 border-b bg-muted/50 cursor-move widget-drag-handle"
         data-testid="widget-header"
@@ -29,6 +32,7 @@ export function WidgetContainer({ widget, onDelete, onConfig, children }: Widget
           {title}
         </span>
         <div className="flex items-center gap-1 shrink-0">
+          <WidgetFilterBadge filters={filters} />
           <Button
             variant="ghost"
             size="icon"

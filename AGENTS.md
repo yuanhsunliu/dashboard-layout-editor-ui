@@ -88,6 +88,11 @@ Continue with OpenSpec Stage 2-3
 8. [ ] Confirm all spec details and design decisions
 9. [ ] Update proposal files based on confirmed answers
 
+**⚠️ 重要**：當使用者表示「完成提案需求的釐清」或類似語句時，AI 助手 **必須主動詢問**：
+> 是否要更新 `./openspec/specs/` 底下的文件？
+
+然後進入 Phase 3。
+
 #### Phase 3: Update Specs (Pre-Implementation)
 10. [ ] Check if `project.md` needs updates (scope, constraints, conventions)
 11. [ ] Check if Technical Specs need updates (new TXX, infrastructure)

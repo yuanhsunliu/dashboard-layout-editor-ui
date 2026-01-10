@@ -2,3 +2,5 @@ export { LineChartPlugin } from './line';
 export { BarChartPlugin } from './bar';
 export { AreaChartPlugin } from './area';
 export { EmbedPlugin } from './embed';
+export { KpiCardPlugin } from './kpi-card';
+export { KpiCardDynamicPlugin } from './kpi-card-dynamic';

@@ -15,7 +15,7 @@ import { ChartPreview } from './ChartPreview';
 import { EmbedPreview } from './EmbedPreview';
 import { getDataSources, getDataSourceById } from '../services/mockDataSources';
 import { chartRegistry } from '@/features/chart-plugins';
-import type { ChartConfig, ChartType, EmbedConfig } from '@/types/chart';
+import type { ChartConfig, ChartType } from '@/types/chart';
 
 interface ChartConfigPanelProps {
   isOpen: boolean;
@@ -35,12 +35,12 @@ export function ChartConfigPanel({
   const [chartType, setChartType] = useState<ChartType>('line');
   const [title, setTitle] = useState('');
   const [dataSourceId, setDataSourceId] = useState('');
-  const [xAxisField, setXAxisField] = useState('');
-  const [yAxisFields, setYAxisFields] = useState<string[]>([]);
-  const [embedUrl, setEmbedUrl] = useState('');
+  const [pluginConfig, setPluginConfig] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const isEmbedType = chartType === 'embed';
+  const isKpiCardType = chartType === 'kpi-card';
+  const isKpiCardDynamicType = chartType === 'kpi-card-dynamic';
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
@@ -49,23 +49,36 @@ export function ChartConfigPanel({
         setChartType(initialConfig.chartType);
         setTitle(initialConfig.title || '');
         if (initialConfig.chartType === 'embed') {
-          setEmbedUrl((initialConfig as EmbedConfig).url || '');
           setDataSourceId('');
-          setXAxisField('');
-          setYAxisFields([]);
+          setPluginConfig({ url: initialConfig.url || '' });
+        } else if (initialConfig.chartType === 'kpi-card') {
+          setDataSourceId('');
+          setPluginConfig({
+            value: initialConfig.value,
+            compareValue: initialConfig.compareValue,
+            fontSize: initialConfig.fontSize || 'md',
+            format: initialConfig.format || {},
+          });
+        } else if (initialConfig.chartType === 'kpi-card-dynamic') {
+          setDataSourceId(initialConfig.dataSourceId || '');
+          setPluginConfig({
+            valueField: initialConfig.valueField || '',
+            showTrend: initialConfig.showTrend || false,
+            fontSize: initialConfig.fontSize || 'md',
+            format: initialConfig.format || {},
+          });
         } else {
           setDataSourceId('dataSourceId' in initialConfig ? initialConfig.dataSourceId : '');
-          setXAxisField('xAxisField' in initialConfig ? initialConfig.xAxisField : '');
-          setYAxisFields('yAxisFields' in initialConfig ? initialConfig.yAxisFields : []);
-          setEmbedUrl('');
+          setPluginConfig({
+            xAxisField: 'xAxisField' in initialConfig ? initialConfig.xAxisField : '',
+            yAxisFields: 'yAxisFields' in initialConfig ? initialConfig.yAxisFields : [],
+          });
         }
       } else {
         setChartType('line');
         setTitle('');
         setDataSourceId('');
-        setXAxisField('');
-        setYAxisFields([]);
-        setEmbedUrl('');
+        setPluginConfig({});
       }
       setErrors({});
     }
@@ -85,6 +98,7 @@ export function ChartConfigPanel({
   const handleChartTypeChange = (type: ChartType) => {
     setChartType(type);
     setErrors({});
+    setPluginConfig({});
     if (type === 'embed') {
       setTitle('嵌入報表');
     } else if (chartType === 'embed') {
@@ -94,14 +108,11 @@ export function ChartConfigPanel({
 
   const handleDataSourceChange = (id: string) => {
     setDataSourceId(id);
-    setXAxisField('');
-    setYAxisFields([]);
+    setPluginConfig({ xAxisField: '', yAxisFields: [] });
   };
 
   const handleFieldsChange = (value: Record<string, unknown>) => {
-    if (typeof value.xAxisField === 'string') setXAxisField(value.xAxisField);
-    if (Array.isArray(value.yAxisFields)) setYAxisFields(value.yAxisFields as string[]);
-    if (typeof value.url === 'string') setEmbedUrl(value.url);
+    setPluginConfig((prev) => ({ ...prev, ...value }));
   };
 
   const handleSave = () => {
@@ -113,15 +124,36 @@ export function ChartConfigPanel({
       formData = {
         chartType,
         title: title || '嵌入報表',
-        url: embedUrl,
+        url: pluginConfig.url || '',
+      };
+    } else if (isKpiCardType) {
+      const valueNum = pluginConfig.value !== undefined ? Number(pluginConfig.value) : undefined;
+      const compareNum = pluginConfig.compareValue !== undefined ? Number(pluginConfig.compareValue) : undefined;
+      formData = {
+        chartType,
+        title,
+        value: valueNum,
+        compareValue: compareNum,
+        fontSize: pluginConfig.fontSize || 'md',
+        format: pluginConfig.format || {},
+      };
+    } else if (isKpiCardDynamicType) {
+      formData = {
+        chartType,
+        title,
+        dataSourceId,
+        valueField: pluginConfig.valueField || '',
+        showTrend: pluginConfig.showTrend || false,
+        fontSize: pluginConfig.fontSize || 'md',
+        format: pluginConfig.format || {},
       };
     } else {
       formData = {
         chartType,
         title,
         dataSourceId,
-        xAxisField,
-        yAxisFields,
+        xAxisField: pluginConfig.xAxisField || '',
+        yAxisFields: pluginConfig.yAxisFields || [],
       };
     }
 
@@ -141,6 +173,41 @@ export function ChartConfigPanel({
 
   const ConfigFields = currentPlugin?.ConfigFields;
 
+  const getConfigFieldsValue = () => {
+    if (isEmbedType) {
+      return { url: pluginConfig.url || '' };
+    }
+    if (isKpiCardType) {
+      return {
+        title,
+        value: pluginConfig.value,
+        compareValue: pluginConfig.compareValue,
+        fontSize: pluginConfig.fontSize || 'md',
+        format: pluginConfig.format || {},
+      };
+    }
+    if (isKpiCardDynamicType) {
+      return {
+        title,
+        valueField: pluginConfig.valueField || '',
+        showTrend: pluginConfig.showTrend || false,
+        fontSize: pluginConfig.fontSize || 'md',
+        format: pluginConfig.format || {},
+      };
+    }
+    return {
+      xAxisField: pluginConfig.xAxisField || '',
+      yAxisFields: (pluginConfig.yAxisFields as string[]) || [],
+    };
+  };
+
+  const handleKpiConfigChange = (value: Record<string, unknown>) => {
+    if ('title' in value && typeof value.title === 'string') {
+      setTitle(value.title);
+    }
+    setPluginConfig((prev) => ({ ...prev, ...value }));
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent 
@@ -155,29 +222,81 @@ export function ChartConfigPanel({
         <div className="space-y-6 py-6">
           <ChartTypeSelector value={chartType} onChange={handleChartTypeChange} error={errors.chartType} />
 
-          <div className="space-y-2">
-            <Label htmlFor="chart-title">標題</Label>
-            <Input
-              id="chart-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={isEmbedType ? '嵌入報表' : '輸入標題...'}
-              maxLength={50}
-              data-testid="chart-title-input"
-            />
-          </div>
+          {!isKpiCardType && !isKpiCardDynamicType && (
+            <div className="space-y-2">
+              <Label htmlFor="chart-title">標題</Label>
+              <Input
+                id="chart-title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={isEmbedType ? '嵌入報表' : '輸入標題...'}
+                maxLength={50}
+                data-testid="chart-title-input"
+              />
+            </div>
+          )}
 
           {isEmbedType ? (
             <>
               {ConfigFields && (
                 <ConfigFields
-                  value={{ url: embedUrl }}
+                  value={{ url: pluginConfig.url || '' }}
                   onChange={handleFieldsChange}
                   fields={[]}
                   errors={{ url: errors.url }}
                 />
               )}
-              <EmbedPreview url={embedUrl} title={title} />
+              <EmbedPreview url={(pluginConfig.url as string) || ''} title={title} />
+            </>
+          ) : isKpiCardType ? (
+            <>
+              {ConfigFields && (
+                <ConfigFields
+                  value={getConfigFieldsValue()}
+                  onChange={handleKpiConfigChange}
+                  fields={[]}
+                  errors={errors}
+                />
+              )}
+
+              <ChartPreview
+                chartType={chartType}
+                dataSource={undefined}
+                xAxisField=""
+                yAxisFields={[]}
+                title={title}
+                pluginConfig={pluginConfig}
+              />
+            </>
+          ) : isKpiCardDynamicType ? (
+            <>
+              <DataSourceSelector
+                dataSources={dataSources}
+                value={dataSourceId}
+                onChange={(id) => {
+                  setDataSourceId(id);
+                  setPluginConfig((prev) => ({ ...prev, valueField: '' }));
+                }}
+                error={errors.dataSourceId}
+              />
+
+              {selectedDataSource && ConfigFields && (
+                <ConfigFields
+                  value={getConfigFieldsValue()}
+                  onChange={handleKpiConfigChange}
+                  fields={selectedDataSource.fields}
+                  errors={errors}
+                />
+              )}
+
+              <ChartPreview
+                chartType={chartType}
+                dataSource={selectedDataSource}
+                xAxisField=""
+                yAxisFields={[]}
+                title={title}
+                pluginConfig={pluginConfig}
+              />
             </>
           ) : (
             <>
@@ -190,7 +309,7 @@ export function ChartConfigPanel({
 
               {selectedDataSource && ConfigFields && (
                 <ConfigFields
-                  value={{ xAxisField, yAxisFields }}
+                  value={getConfigFieldsValue()}
                   onChange={handleFieldsChange}
                   fields={selectedDataSource.fields}
                   errors={{
@@ -203,8 +322,8 @@ export function ChartConfigPanel({
               <ChartPreview
                 chartType={chartType}
                 dataSource={selectedDataSource}
-                xAxisField={xAxisField}
-                yAxisFields={yAxisFields}
+                xAxisField={(pluginConfig.xAxisField as string) || ''}
+                yAxisFields={(pluginConfig.yAxisFields as string[]) || []}
                 title={title}
               />
             </>

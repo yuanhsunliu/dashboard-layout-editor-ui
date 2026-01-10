@@ -4,10 +4,14 @@ import type { EChartsOption } from 'echarts';
 import { DEMO_DATA } from '@/components/chart/demoData';
 import type { ChartRendererProps } from '../../types';
 import type { LineChartConfig } from './schema';
+import { getHighlightOpacity } from '../../utils/filterUtils';
 
 export function LineChartRenderer({ 
   config, 
-  data 
+  data,
+  filters = [],
+  widgetId,
+  onInteraction,
 }: ChartRendererProps<LineChartConfig>) {
   const chartRef = useRef<ReactECharts>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -37,26 +41,58 @@ export function LineChartRenderer({
     };
   }, [handleResize]);
 
+  const handleChartClick = useCallback((params: { name?: string; seriesName?: string }) => {
+    if (!onInteraction || !widgetId) return;
+    
+    const clickedValue = params.name;
+    if (clickedValue && config.xAxisField) {
+      onInteraction({
+        type: 'click',
+        field: config.xAxisField,
+        value: clickedValue,
+        widgetId,
+      });
+    }
+  }, [onInteraction, widgetId, config.xAxisField]);
+
   const option: EChartsOption = useMemo(() => {
     const chartData = data || DEMO_DATA.line;
+    const xAxisField = config.xAxisField || 'x';
+    const xAxisData = chartData.xAxis || [];
+    const seriesData = chartData.series || [];
+    
     return {
       title: config.title ? { text: config.title, left: 'center', top: 10 } : undefined,
       tooltip: { trigger: 'axis' },
       xAxis: {
         type: 'category',
-        data: chartData.xAxis,
+        data: xAxisData,
       },
       yAxis: { type: 'value' },
-      series: chartData.series.map((s) => ({
+      series: seriesData.map((s) => ({
         name: s.name,
         type: 'line' as const,
-        data: s.data,
+        data: s.data.map((value, index) => {
+          const xValue = xAxisData[index];
+          const opacity = getHighlightOpacity(xValue, xAxisField, filters);
+          return {
+            value,
+            itemStyle: { opacity },
+          };
+        }),
         smooth: config.smooth,
         areaStyle: config.showArea ? {} : undefined,
+        lineStyle: {
+          opacity: filters.length > 0 && filters.some(f => f.field === xAxisField) ? 0.5 : 1,
+        },
       })),
       grid: { left: 40, right: 20, top: config.title ? 50 : 30, bottom: 30 },
     };
-  }, [config.title, config.smooth, config.showArea, data]);
+  }, [config.title, config.smooth, config.showArea, config.xAxisField, data, filters]);
+
+  const onEvents = useMemo(() => ({
+    click: handleChartClick,
+  }), [handleChartClick]);
 
   return (
     <div ref={containerRef} className="w-full h-full" data-testid="line-chart">
@@ -65,6 +101,7 @@ export function LineChartRenderer({
         option={option}
         style={{ height: '100%', width: '100%' }}
         opts={{ renderer: 'canvas' }}
+        onEvents={onEvents}
         notMerge
       />
     </div>

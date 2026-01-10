@@ -1,4 +1,4 @@
-export type ChartType = 'line' | 'bar' | 'area' | 'embed';
+export type ChartType = 'line' | 'bar' | 'area' | 'embed' | 'kpi-card' | 'kpi-card-dynamic';
 
 export interface BaseChartConfig {
   chartType: ChartType;
@@ -28,4 +28,28 @@ export interface EmbedConfig {
   url: string;
 }
 
-export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig;
+export interface KpiCardFormat {
+  thousandSeparator?: boolean;
+  decimalPlaces?: number;
+  isPercentage?: boolean;
+  suffix?: string;
+}
+
+export interface KpiCardConfig {
+  chartType: 'kpi-card';
+  title?: string;
+  value: number;
+  compareValue?: number;
+  fontSize?: 'sm' | 'md' | 'lg';
+  format?: KpiCardFormat;
+}
+
+export interface KpiCardDynamicConfig extends BaseChartConfig {
+  chartType: 'kpi-card-dynamic';
+  valueField: string;
+  showTrend?: boolean;
+  fontSize?: 'sm' | 'md' | 'lg';
+  format?: KpiCardFormat;
+}
+
+export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig | KpiCardConfig | KpiCardDynamicConfig;
