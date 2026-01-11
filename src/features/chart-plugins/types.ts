@@ -12,6 +12,7 @@ export interface BaseChartConfig {
 export interface ChartRendererProps<TConfig extends BaseChartConfig = BaseChartConfig> {
   config: TConfig;
   data?: DemoData;
+  fields?: DataSourceField[];
   filters?: DashboardFilter[];
   widgetId?: string;
   onInteraction?: (event: ChartInteractionEvent) => void;

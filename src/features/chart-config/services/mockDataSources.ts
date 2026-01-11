@@ -84,6 +84,41 @@ export const mockDataSources: DataSource[] = [
       ],
     },
   },
+  {
+    id: 'production-performance',
+    name: '產線績效',
+    fields: [
+      { name: 'year', type: 'string', label: '年度' },
+      { name: 'quarter', type: 'string', label: '季度' },
+      { name: 'product', type: 'string', label: '產品線' },
+      { name: 'output', type: 'number', label: '產出數' },
+      { name: 'cycleTime', type: 'number', label: 'Cycle Time (秒)' },
+    ],
+    demoData: {
+      rows: [
+        // 2023 TV產品
+        { year: '2023', quarter: 'Q1', product: 'TV產品', output: 12500, cycleTime: 48.2 },
+        { year: '2023', quarter: 'Q2', product: 'TV產品', output: 13200, cycleTime: 46.5 },
+        { year: '2023', quarter: 'Q3', product: 'TV產品', output: 14100, cycleTime: 44.8 },
+        { year: '2023', quarter: 'Q4', product: 'TV產品', output: 15800, cycleTime: 42.3 },
+        // 2023 車用產品
+        { year: '2023', quarter: 'Q1', product: '車用產品', output: 8200, cycleTime: 62.5 },
+        { year: '2023', quarter: 'Q2', product: '車用產品', output: 8800, cycleTime: 58.2 },
+        { year: '2023', quarter: 'Q3', product: '車用產品', output: 9500, cycleTime: 55.1 },
+        { year: '2023', quarter: 'Q4', product: '車用產品', output: 10200, cycleTime: 52.8 },
+        // 2024 TV產品
+        { year: '2024', quarter: 'Q1', product: 'TV產品', output: 16200, cycleTime: 41.5 },
+        { year: '2024', quarter: 'Q2', product: 'TV產品', output: 17500, cycleTime: 39.8 },
+        { year: '2024', quarter: 'Q3', product: 'TV產品', output: 18800, cycleTime: 38.2 },
+        { year: '2024', quarter: 'Q4', product: 'TV產品', output: 20100, cycleTime: 36.5 },
+        // 2024 車用產品
+        { year: '2024', quarter: 'Q1', product: '車用產品', output: 11000, cycleTime: 50.2 },
+        { year: '2024', quarter: 'Q2', product: '車用產品', output: 12200, cycleTime: 47.5 },
+        { year: '2024', quarter: 'Q3', product: '車用產品', output: 13500, cycleTime: 45.1 },
+        { year: '2024', quarter: 'Q4', product: '車用產品', output: 14800, cycleTime: 42.8 },
+      ],
+    },
+  },
 ];
 
 export function getDataSources(): DataSource[] {

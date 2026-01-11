@@ -12,6 +12,20 @@ export interface LineChartConfig extends BaseChartConfig {
   yAxisFields: string[];
   smooth?: boolean;
   showArea?: boolean;
+  // 雙 Y 軸
+  enableDualYAxis?: boolean;
+  leftYAxisFields?: string[];
+  rightYAxisFields?: string[];
+  // 階層式 X 軸
+  enableHierarchicalXAxis?: boolean;
+  outerXAxisField?: string;
+  innerXAxisField?: string;
+  outerXAxisSort?: 'asc' | 'desc' | 'data';
+  innerXAxisSort?: 'asc' | 'desc' | 'data';
+  // Series 分群
+  enableGroupBy?: boolean;
+  groupByField?: string;
+  groupBySort?: 'asc' | 'desc' | 'data';
 }
 
 export interface BarChartConfig extends BaseChartConfig {

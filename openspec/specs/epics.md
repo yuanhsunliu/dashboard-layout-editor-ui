@@ -152,6 +152,7 @@ MVP 完成後可按優先順序擴展：
 - ~~KPI Card Plugin~~ ✅ 已完成（靜態數值輸入）
 - KPI Card Dynamic Plugin ⬅️（從資料來源取值）
 - ~~Tool Timeline Plugin~~ ✅ 已完成 2026-01-10（機台狀態時間軸 + OEE 指標 + Cross-Widget 互動）
+- ~~Line Chart 增強~~ ✅ 已完成 2026-01-11（雙 Y 軸、階層式 X 軸、Series 分群、軸標籤顯示）
 - 主題系統 (F05)
 - 外部資料源整合 (F06)
 

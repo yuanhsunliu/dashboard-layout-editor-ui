@@ -101,6 +101,7 @@ export function ChartPreview({
       dataSourceId: dataSource.id,
       xAxisField,
       yAxisFields,
+      ...pluginConfig,
     };
 
     return baseConfig as ChartConfig;
@@ -116,20 +117,35 @@ export function ChartPreview({
     if (chartType === 'tool-timeline' && dataSource) {
       return { rows: dataSource.demoData.rows };
     }
-    if (!dataSource || !xAxisField || yAxisFields.length === 0) return undefined;
+    
+    const enableDualYAxis = pluginConfig?.enableDualYAxis as boolean;
+    const leftYAxisFields = (pluginConfig?.leftYAxisFields as string[]) || [];
+    const rightYAxisFields = (pluginConfig?.rightYAxisFields as string[]) || [];
+    const enableHierarchicalXAxis = pluginConfig?.enableHierarchicalXAxis as boolean;
+    
+    if (enableHierarchicalXAxis && dataSource) {
+      return { rawData: dataSource.demoData.rows };
+    }
+    
+    const effectiveYAxisFields = enableDualYAxis 
+      ? [...leftYAxisFields, ...rightYAxisFields]
+      : yAxisFields;
+    
+    if (!dataSource || !xAxisField || effectiveYAxisFields.length === 0) return undefined;
 
     const { rows } = dataSource.demoData;
     const xAxis = rows.map(row => String(row[xAxisField] ?? ''));
-    const series = yAxisFields.map(field => {
+    const series = effectiveYAxisFields.map(field => {
       const fieldDef = dataSource.fields.find(f => f.name === field);
       return {
         name: fieldDef?.label ?? field,
+        fieldName: field,
         data: rows.map(row => Number(row[field]) || 0),
       };
     });
 
     return { xAxis, series };
-  }, [dataSource, xAxisField, yAxisFields, chartType]);
+  }, [dataSource, xAxisField, yAxisFields, chartType, pluginConfig]);
 
   if (!isComplete) {
     return (
@@ -152,7 +168,11 @@ export function ChartPreview({
         className={`border rounded-md overflow-hidden ${heightClass}`}
         data-testid="chart-preview"
       >
-        <ChartRenderer config={previewConfig!} previewData={previewData} />
+        <ChartRenderer 
+          config={previewConfig!} 
+          previewData={previewData} 
+          fields={dataSource?.fields}
+        />
       </div>
     </div>
   );

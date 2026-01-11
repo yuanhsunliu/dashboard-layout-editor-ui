@@ -1,5 +1,6 @@
 import type { ChartConfig } from '@/types/chart';
 import type { DemoData } from './demoData';
+import type { DataSourceField } from '@/features/chart-config/types';
 import type { DashboardFilter, ChartInteractionEvent } from '@/types/filter';
 import { chartRegistry, ChartErrorBoundary } from '@/features/chart-plugins';
 import { AlertTriangle } from 'lucide-react';
@@ -7,6 +8,7 @@ import { AlertTriangle } from 'lucide-react';
 interface ChartRendererProps {
   config: ChartConfig;
   previewData?: DemoData;
+  fields?: DataSourceField[];
   filters?: DashboardFilter[];
   widgetId?: string;
   onInteraction?: (event: ChartInteractionEvent) => void;
@@ -15,6 +17,7 @@ interface ChartRendererProps {
 export function ChartRenderer({ 
   config, 
   previewData,
+  fields,
   filters,
   widgetId,
   onInteraction,
@@ -39,7 +42,8 @@ export function ChartRenderer({
     <ChartErrorBoundary>
       <Renderer 
         config={config} 
-        data={previewData} 
+        data={previewData}
+        fields={fields}
         filters={filters}
         widgetId={widgetId}
         onInteraction={onInteraction}

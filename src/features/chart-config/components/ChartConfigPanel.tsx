@@ -106,9 +106,24 @@ export function ChartConfigPanel({
           });
         } else {
           setDataSourceId('dataSourceId' in initialConfig ? initialConfig.dataSourceId : '');
+          const config = initialConfig as unknown as Record<string, unknown>;
           setPluginConfig({
             xAxisField: 'xAxisField' in initialConfig ? initialConfig.xAxisField : '',
             yAxisFields: 'yAxisFields' in initialConfig ? initialConfig.yAxisFields : [],
+            // Line Chart 進階設定
+            enableHierarchicalXAxis: config.enableHierarchicalXAxis || false,
+            outerXAxisField: config.outerXAxisField || '',
+            innerXAxisField: config.innerXAxisField || '',
+            outerXAxisSort: config.outerXAxisSort || 'data',
+            innerXAxisSort: config.innerXAxisSort || 'data',
+            enableDualYAxis: config.enableDualYAxis || false,
+            leftYAxisFields: config.leftYAxisFields || [],
+            rightYAxisFields: config.rightYAxisFields || [],
+            enableGroupBy: config.enableGroupBy || false,
+            groupByField: config.groupByField || '',
+            groupBySort: config.groupBySort || 'data',
+            smooth: config.smooth || false,
+            showArea: config.showArea || false,
           });
         }
       } else {

@@ -2,6 +2,13 @@
 
 ## Status
 ✅ **Implemented** - 2026-01-06
+🔄 **Enhanced** - 2026-01-11 (Line Chart 增強功能)
+
+## Status History
+| Date | Status | Notes |
+|------|--------|-------|
+| 2026-01-11 | 🔄 Enhanced | Line Chart 增強：雙 Y 軸、階層式 X 軸、Series 分群、軸標籤 |
+| 2026-01-06 | ✅ Completed | 初始實作完成 |
 
 ## Overview
 Widget 可以渲染 ECharts 圖表，支援多種圖表類型，並響應 Widget 大小變化自動調整。
@@ -9,6 +16,8 @@ Widget 可以渲染 ECharts 圖表，支援多種圖表類型，並響應 Widget
 ## User Stories
 - 作為使用者，我可以在 Widget 中看到圖表，以便視覺化資料
 - 作為使用者，當我調整 Widget 大小時，圖表會自動適應新尺寸
+- 作為使用者，我可以在 Line Chart 使用雙 Y 軸來比較不同量綱的指標
+- 作為使用者，我可以使用階層式 X 軸來呈現多層級分類
 
 ## Acceptance Criteria
 
@@ -107,11 +116,31 @@ interface BaseChartConfig {
   dataSourceId: string;
 }
 
-// Line Chart
+// Line Chart (Enhanced 2026-01-11)
 interface LineChartConfig extends BaseChartConfig {
   chartType: 'line';
-  xAxisField: string;
-  yAxisFields: string[];
+  
+  // 基本設定（向下相容）
+  xAxisField?: string;
+  yAxisFields?: string[];
+  
+  // 雙 Y 軸
+  enableDualYAxis?: boolean;
+  leftYAxisFields?: string[];
+  rightYAxisFields?: string[];
+  
+  // 階層式 X 軸
+  enableHierarchicalXAxis?: boolean;
+  outerXAxisField?: string;
+  innerXAxisField?: string;
+  outerXAxisSort?: 'asc' | 'desc' | 'data';
+  innerXAxisSort?: 'asc' | 'desc' | 'data';
+  
+  // Series 分群
+  enableGroupBy?: boolean;
+  groupByField?: string;
+  groupBySort?: 'asc' | 'desc' | 'data';
+  
   smooth?: boolean;
   showArea?: boolean;
 }

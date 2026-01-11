@@ -3,12 +3,14 @@ import type { DemoDataRow } from '@/features/chart-config/types';
 export interface DemoDataSeries {
   name: string;
   data: number[];
+  fieldName?: string;
 }
 
 export interface DemoData {
   xAxis?: string[];
   series?: DemoDataSeries[];
   rows?: DemoDataRow[];
+  rawData?: Record<string, unknown>[];
 }
 
 export interface ChartDemoData {

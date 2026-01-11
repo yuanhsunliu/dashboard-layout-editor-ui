@@ -15,13 +15,17 @@ interface ChartWidgetProps {
 export function ChartWidget({ chartConfig, widgetId, onConfigClick }: ChartWidgetProps) {
   const { filters, toggleFilterValue } = useDashboardFilterStore();
 
+  const dataSource = useMemo(() => {
+    if (!chartConfig) return undefined;
+    return getDataSourceById(chartConfig.dataSourceId);
+  }, [chartConfig]);
+
   const chartData = useMemo(() => {
     if (!chartConfig) return undefined;
     if (chartConfig.chartType === 'embed') return undefined;
     if (chartConfig.chartType === 'kpi-card') return undefined;
     if (chartConfig.chartType === 'ai-comment') return undefined;
     
-    const dataSource = getDataSourceById(chartConfig.dataSourceId);
     if (!dataSource) return undefined;
 
     if (chartConfig.chartType === 'kpi-card-dynamic') {
@@ -29,20 +33,36 @@ export function ChartWidget({ chartConfig, widgetId, onConfigClick }: ChartWidge
     }
 
     const { rows } = dataSource.demoData;
+    
+    // For line chart with hierarchical X axis, pass rawData
+    if (chartConfig.chartType === 'line' && chartConfig.enableHierarchicalXAxis) {
+      return { rawData: rows };
+    }
+    
     const xAxisField = 'xAxisField' in chartConfig ? chartConfig.xAxisField : '';
     const yAxisFields = 'yAxisFields' in chartConfig ? chartConfig.yAxisFields : [];
     
+    // Handle dual Y axis for line chart
+    let effectiveYAxisFields = yAxisFields;
+    if (chartConfig.chartType === 'line' && chartConfig.enableDualYAxis) {
+      effectiveYAxisFields = [
+        ...(chartConfig.leftYAxisFields || []),
+        ...(chartConfig.rightYAxisFields || []),
+      ];
+    }
+    
     const xAxis = rows.map(row => String(row[xAxisField] ?? ''));
-    const series = yAxisFields.map(field => {
+    const series = effectiveYAxisFields.map(field => {
       const fieldDef = dataSource.fields.find(f => f.name === field);
       return {
         name: fieldDef?.label ?? field,
+        fieldName: field,
         data: rows.map(row => Number(row[field]) || 0),
       };
     });
 
     return { xAxis, series };
-  }, [chartConfig]);
+  }, [chartConfig, dataSource]);
 
   const relevantFilters = useMemo(() => {
     if (!chartConfig) return [];
@@ -67,6 +87,7 @@ export function ChartWidget({ chartConfig, widgetId, onConfigClick }: ChartWidge
       <ChartRenderer 
         config={chartConfig} 
         previewData={chartData}
+        fields={dataSource?.fields}
         filters={relevantFilters}
         widgetId={widgetId}
         onInteraction={handleInteraction}
