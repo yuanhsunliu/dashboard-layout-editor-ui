@@ -23,7 +23,7 @@ export function WidgetContainer({ widget, onDelete, onConfig, filters = [], chil
   const title = getTitle();
 
   return (
-    <div className="relative flex flex-col h-full bg-card border rounded-lg shadow-sm overflow-hidden">
+    <div className="relative flex flex-col h-full bg-card border shadow-sm overflow-hidden">
       <div
         className="flex items-center justify-between px-3 py-2 border-b bg-muted/50 cursor-move widget-drag-handle"
         data-testid="widget-header"

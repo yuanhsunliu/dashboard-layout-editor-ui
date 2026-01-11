@@ -91,8 +91,8 @@ export function AiCommentRenderer({
   }
 
   return (
-    <Card className="h-full flex flex-col" data-testid="ai-comment">
-      <CardContent className="flex-1 flex flex-col p-4 overflow-hidden">
+    <Card className="h-full flex flex-col py-0" data-testid="ai-comment">
+      <CardContent className="flex-1 flex flex-col p-3 overflow-hidden">
         {state === 'idle' && (
           <div className="flex-1 flex flex-col items-center justify-center gap-2 text-muted-foreground">
             <p>點擊下方按鈕開始 AI 洞察</p>
@@ -142,7 +142,7 @@ export function AiCommentRenderer({
             >
               <ReactMarkdown>{result.insight}</ReactMarkdown>
             </div>
-            <div className="flex items-center justify-between mt-2 pt-2 border-t">
+            <div className="flex items-center justify-between pt-2 border-t shrink-0">
               <span
                 className="text-xs text-muted-foreground"
                 data-testid="ai-analyzed-at"
