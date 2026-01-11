@@ -1,4 +1,4 @@
-export type ChartType = 'line' | 'bar' | 'area' | 'embed' | 'kpi-card' | 'kpi-card-dynamic' | 'ai-comment' | 'tool-timeline';
+export type ChartType = 'line' | 'bar' | 'area' | 'embed' | 'kpi-card' | 'kpi-card-dynamic' | 'ai-comment' | 'tool-timeline' | 'combo';
 
 export interface BaseChartConfig {
   chartType: ChartType;
@@ -119,4 +119,14 @@ export interface ToolTimelineConfig {
   };
 }
 
-export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig | KpiCardConfig | KpiCardDynamicConfig | AiCommentConfig | ToolTimelineConfig;
+export interface ComboChartConfig extends BaseChartConfig {
+  chartType: 'combo';
+  xAxisField: string;
+  leftYAxisFields: string[];
+  rightYAxisFields: string[];
+  leftYAxisLabel?: string;
+  rightYAxisLabel?: string;
+  smooth?: boolean;
+}
+
+export type ChartConfig = LineChartConfig | BarChartConfig | EmbedConfig | KpiCardConfig | KpiCardDynamicConfig | AiCommentConfig | ToolTimelineConfig | ComboChartConfig;

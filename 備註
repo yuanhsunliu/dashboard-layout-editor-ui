@@ -7,8 +7,26 @@
 請逐一確認. 如果我的選擇，不是你所預期的，請主動提出建議。
 
 提案已完成釐清
-
-AI Comment 元件
-機況圖元件
-
+我要跟你討論新需求可行性.
 Openspec 歸檔
+
+#AI Comment 元件
+#機況圖元件
+#KPI Card 靜態與動態元件中的數值希望能支援檢查條件, 指定顏色. 
+; 程式碼架構問題.
+; features/components/ChartConfigPanel.tsx 和 ChartPreview.tsx 中
+; 發現以下的程式碼片段:
+;   const isEmbedType = chartType === 'embed';
+;   const isKpiCardType = chartType === 'kpi-card';
+;   const isKpiCardDynamicType = chartType === 'kpi-card-dynamic';
+;   const isAiCommentType = chartType === 'ai-comment';
+;   const isToolTimelineType = chartType === 'tool-timeline';
+; 這算是 hardcode 嗎？
+; plugin widget 開發者提供的新元件類型, 都要來這邊改 code 嗎?
+; 你有更好的建議嗎?
+
+#Line Chart 希望能支援左右軸不同量綱的功能
+#Line Chart 希望 X 軸能支援多維度的功能
+
+Line+Bar Combo Chart 希望能支援左右軸不同量綱的功能.
+Line+Bar Combo Chart 如果有這用應用情境，希望 X 軸能支援多維度的功能.

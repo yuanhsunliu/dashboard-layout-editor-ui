@@ -104,6 +104,17 @@ export function ChartConfigPanel({
             kpiFields: config.kpiFields || [],
             tooltip: config.tooltip || { enabled: true },
           });
+        } else if (initialConfig.chartType === 'combo') {
+          setDataSourceId('dataSourceId' in initialConfig ? initialConfig.dataSourceId : '');
+          const config = initialConfig as unknown as Record<string, unknown>;
+          setPluginConfig({
+            xAxisField: config.xAxisField || '',
+            leftYAxisFields: config.leftYAxisFields || [],
+            rightYAxisFields: config.rightYAxisFields || [],
+            leftYAxisLabel: config.leftYAxisLabel || '',
+            rightYAxisLabel: config.rightYAxisLabel || '',
+            smooth: config.smooth || false,
+          });
         } else {
           setDataSourceId('dataSourceId' in initialConfig ? initialConfig.dataSourceId : '');
           const config = initialConfig as unknown as Record<string, unknown>;

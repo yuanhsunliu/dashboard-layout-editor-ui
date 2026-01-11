@@ -17,6 +17,7 @@ export function ChartWidget({ chartConfig, widgetId, onConfigClick }: ChartWidge
 
   const dataSource = useMemo(() => {
     if (!chartConfig) return undefined;
+    if (!('dataSourceId' in chartConfig)) return undefined;
     return getDataSourceById(chartConfig.dataSourceId);
   }, [chartConfig]);
 
