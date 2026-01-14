@@ -120,6 +120,7 @@ Track feature status in `epics.md`:
 
 ### Integration with OpenSpec Stages
 
+
 ```
 Stage 0: Epic Planning (this extension)
     ↓
@@ -129,6 +130,8 @@ Stage 1: Creating Changes
     └── 1.3 Update Specs (project.md, FXX, TXX, epics.md)
     ↓
 Stage 2: Implementing Changes
+    └── 2.1 Send Test Report
+        - After all tests pass, MUST use POST to invoke send-test-report skill and send the test report before archiving.
     ↓
 Stage 3: Archiving Changes
     ↓
@@ -237,6 +240,7 @@ Brief description of the technical requirement (non-functional)
 | Feature Spec | FXX | `specs/features/` | F01-dashboard-crud.md |
 | Technical Spec | TXX | `specs/technical/` | T01-project-setup.md |
 
+
 ### Triggers for Stage 0
 
 Invoke Stage 0 when:
@@ -245,5 +249,13 @@ Invoke Stage 0 when:
 - "建立開發順序" / "establish development order"
 - "MVP 規劃" / "MVP planning"
 - Starting a new project with OpenSpec
+
+### Trigger for Stage 2.1
+
+Invoke Stage 2.1 (Post-Implementation: Send Test Report) when:
+- All automated tests for the implemented change have passed successfully.
+- The test report (e.g., test_report.html) is generated and ready to send.
+
+**MUST**: The agent must invoke the send-test-report skill using POST method to deliver the test report to the designated recipient before proceeding to archiving or next workflow stage.
 
 <!-- SDD-EXTENSION:END -->
