@@ -28,5 +28,6 @@ Openspec 歸檔
 #Line Chart 希望能支援左右軸不同量綱的功能
 #Line Chart 希望 X 軸能支援多維度的功能
 
-Line+Bar Combo Chart 希望能支援左右軸不同量綱的功能.
-Line+Bar Combo Chart 如果有這用應用情境，希望 X 軸能支援多維度的功能.
+#Line+Bar Combo Chart 希望能支援左右軸不同量綱的功能.
+#Line+Bar Combo Chart 如果有這用應用情境，希望 X 軸能支援多維度的功能.
+#這需要建立新的 plugin widget 類型嗎?
